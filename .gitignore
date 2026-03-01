@@ -1,10 +1,40 @@
-# python generated files
+# Python generated files
 __pycache__/
-*.py[oc]
-build/
+*.py[cod]
+*.egg-info/
 dist/
+build/
 wheels/
-*.egg-info
 
-# venv
-.venv
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.project
+.pydevproject
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+*.cover
+
+# Project-specific
+*.log
+.python-version
+.env
+.env.local
+
+# OS
+Thumbs.db
+.Thumbs.db
