@@ -63,7 +63,7 @@ class ConfigManager(AbstractContextManager):
 class OverlayDict(dict):
     def __init__(self, bottom=None, init=None):
         super().__init__(**(init or {}))
-        self.bottom = bottom or {}
+        self.bottom = bottom if bottom is not None else {}
 
     # By default get does not call __missing__ but immediately returns default.
     def get(self, key, default=None):
