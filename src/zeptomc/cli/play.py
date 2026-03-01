@@ -1,5 +1,3 @@
-import getpass
-
 import click
 
 from zeptomc.account import AccountError, OfflineAccount, MicrosoftAccount

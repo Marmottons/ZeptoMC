@@ -145,7 +145,7 @@ class ForgeInstallContext:
     forge_version: str
     version_dir: Path
     libraries_dir: Path
-    version_name: str  # Name of the output picomc profile
+    version_name: str  # Name of the output zeptomc profile
     extract_dir: Path  # Root of extracted installer
     installer_file: Path
     install_profile: dict
@@ -181,7 +181,7 @@ def make_base_vspec(ctx: ForgeInstallContext):
     if "inheritsFrom" in vi:
         vspec["jar"] = vi["inheritsFrom"]  # Prevent vanilla jar duplication
     else:
-        # This is the case for som really old forge versions, before the
+        # This is the case for some really old forge versions, before the
         # launcher supported inheritsFrom. Libraries should also be filtered
         # in this case, as they contain everything from the vanilla vspec as well.
         # TODO
@@ -248,7 +248,7 @@ def install_113(ctx: ForgeInstallContext):
             logger.debug("Found -DignoreList, extending.")
             vspec["arguments"]["jvm"][i] += r",${jar_name}.jar"
         else:
-            logger.warn(
+            logger.warning(
                 "Could not locate -DignoreList arg, something is probably wrong. The game may not work."
             )
 
@@ -301,7 +301,7 @@ def install(
         "site, please consider supporting them at https://www.patreon.com/LexManos/\n"
         "or by visiting their website and looking at some ads."
     ).splitlines():
-        logger.warn(line)
+        logger.warning(line)
 
     installer_url = urllib.parse.urljoin(
         MAVEN_URL, posixpath.join(version, INSTALLER_FILE.format(version))
@@ -351,7 +351,7 @@ def install(
                         logger.info("Installing with PicoForgeWrapper")
                         install_113(ctx)
             logger.info("Done installing Forge")
-        except:  # noqa E722
+        except Exception:  # noqa E722
             shutil.rmtree(version_dir, ignore_errors=True)
             raise
     return version_name

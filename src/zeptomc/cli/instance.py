@@ -52,7 +52,9 @@ def create(im, instance_name, version):
 @instance_cli.command()
 @pass_instance_manager
 def list(im):
-    """Show all instances."""
+    """Show all instances.
+    
+    Example: zeptomc instance list"""
     print("\n".join(im.list()))
 
 
@@ -100,7 +102,9 @@ def launch(am, im, instance_name, account, version_override, verify):
 @instance_cmd
 @pass_instance_manager
 def extract_natives(im, instance_name):
-    """Extract natives and leave them on disk."""
+    """Extract natives and leave them on disk.
+    
+    Example: zeptomc instance natives my-world"""
     if not im.exists(instance_name):
         die("No such instance exists.")
     inst = im.get(instance_name)
@@ -126,7 +130,9 @@ def _dir(launcher, im, instance_name):
 @click.argument("new_name")
 @pass_instance_manager
 def rename(im, instance_name, new_name):
-    """Rename an instance."""
+    """Rename an instance.
+    
+    Example: zeptomc instance rename old-name new-name"""
     new_name = sanitize_name(new_name)
     if im.exists(instance_name):
         if im.exists(new_name):

@@ -102,9 +102,8 @@ def install(versions_root, game_version=None, loader_version=None, version_name=
 
     msg = f"Installing Fabric version {loader_version}-{game_version}"
     if version_name:
-        logger.info(msg + f" as {version_name}")
-    else:
-        logger.info(msg)
+        msg += f" as {version_name}"
+    logger.info(msg)
 
     vspec_obj = generate_vspec_obj(
         version_name, loader_obj, loader_version, game_version

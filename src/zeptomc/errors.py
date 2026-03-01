@@ -1,14 +1,14 @@
-class PicomcError(Exception):
+class ZeptomcError(Exception):
     pass
 
 
-class AuthenticationError(PicomcError):
+class AuthenticationError(ZeptomcError):
     pass
 
 
-class RefreshError(PicomcError):
+class RefreshError(ZeptomcError):
     pass
 
 
-class ValidationError(PicomcError):
+class ValidationError(ZeptomcError):
     pass

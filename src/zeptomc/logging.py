@@ -2,7 +2,7 @@ import logging
 
 from zeptomc.colors import ColorFormatter
 
-logger = logging.getLogger("picomc.cli")
+logger = logging.getLogger("zeptomc.cli")
 debug = False
 
 

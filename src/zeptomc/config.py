@@ -39,7 +39,11 @@ class ConfigManager(AbstractContextManager):
     def __exit__(self, type, value, traceback):
         self.commit_all_dirty()
 
-    def get(self, path, bottom={}, init={}):
+    def get(self, path, bottom=None, init=None):
+        if bottom is None:
+            bottom = {}
+        if init is None:
+            init = {}
         abspath = os.path.join(self.root, path)
         if abspath in self.configs:
             return self.configs[abspath]
@@ -51,15 +55,15 @@ class ConfigManager(AbstractContextManager):
         return self.get(path, bottom=self.global_config)
 
     def commit_all_dirty(self):
-        logger.debug("Commiting all dirty configs")
+        logger.debug("Committing all dirty configs")
         for conf in self.configs.values():
             conf.save_if_dirty()
 
 
 class OverlayDict(dict):
-    def __init__(self, bottom={}, init={}):
-        super().__init__(**init)
-        self.bottom = bottom
+    def __init__(self, bottom=None, init=None):
+        super().__init__(**(init or {}))
+        self.bottom = bottom or {}
 
     # By default get does not call __missing__ but immediately returns default.
     def get(self, key, default=None):
@@ -76,12 +80,12 @@ class OverlayDict(dict):
 
 
 class Config(OverlayDict):
-    def __init__(self, config_file, bottom={}, init={}):
+    def __init__(self, config_file, bottom=None, init=None):
         super().__init__(init=init, bottom=bottom)
         self.filepath = config_file
         self.dirty = not self.load()
 
-    # TODO This way of detecting dirtyness is not good enough, as for example
+    # TODO This way of detecting dirtiness is not good enough, as for example
     # a dict within the config can be modified (account config is not flat)
     # Not sure what to do about this
 
@@ -94,7 +98,7 @@ class Config(OverlayDict):
         return super().__delitem__(key)
 
     # The update, setdefault and clear implementations are necessary, because
-    # the builtins do not call __setitem__ (__delitem__) thereforce would not trip the
+    # the builtins do not call __setitem__ (__delitem__) therefore would not trip the
     # dirty flag.
 
     def clear(self):

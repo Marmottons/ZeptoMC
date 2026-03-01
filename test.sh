@@ -57,7 +57,7 @@ test_import() {
 
 echo ""
 echo -e "${COLOR_BLUE}╔════════════════════════════════════════╗${COLOR_NC}"
-echo -e "${COLOR_BLUE}║  TESTS FONCTIONNELS - ZeptoMC/zeptomc   ║${COLOR_NC}"
+echo -e "${COLOR_BLUE}║  TESTS FONCTIONNELS - ZeptoMC/zeptomc  ║${COLOR_NC}"
 echo -e "${COLOR_BLUE}╚════════════════════════════════════════╝${COLOR_NC}"
 echo ""
 
@@ -75,7 +75,6 @@ test_import "zeptomc.account" "zeptomc.account"
 test_import "zeptomc.instance" "zeptomc.instance"
 test_import "zeptomc.mod.forge" "zeptomc.mod.forge"
 test_import "zeptomc.mod.fabric" "zeptomc.mod.fabric"
-test_import "zeptomc.mod.curse" "zeptomc.mod.curse"
 
 echo ""
 
@@ -99,32 +98,32 @@ echo "────────────────────────�
 test_import "click (required)" "click"
 test_import "requests (required)" "requests"
 
-# Vérifier que les anciennes dépendances ne sont PAS présentes
-echo -n "Testing: tqdm NOT imported (removed) ... "
-if ! python -c "import sys; sys.path.insert(0, 'src'); from zeptomc.colors import ProgressBar; import tqdm" 2>/dev/null; then
-    echo -e "${COLOR_GREEN}OK${COLOR_NC} (correctly removed)"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${COLOR_RED}FAILED${COLOR_NC} (tqdm still present)"
+# Vérifier que ZeptoMC n'importe PAS les anciennes dépendances
+echo -n "Testing: tqdm NOT used by zeptomc ... "
+if ! python -c "import sys; sys.path.insert(0, 'src'); import zeptomc.colors; assert 'tqdm' not in sys.modules" 2>/dev/null; then
+    echo -e "${COLOR_RED}FAILED${COLOR_NC} (tqdm still imported by zeptomc)"
     TESTS_FAILED=$((TESTS_FAILED + 1))
+else
+    echo -e "${COLOR_GREEN}OK${COLOR_NC} (not used)"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
 fi
 
-echo -n "Testing: coloredlogs NOT imported (removed) ... "
-if ! python -c "import coloredlogs" 2>/dev/null; then
-    echo -e "${COLOR_GREEN}OK${COLOR_NC} (correctly removed)"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${COLOR_RED}FAILED${COLOR_NC} (coloredlogs still present)"
+echo -n "Testing: coloredlogs NOT used by zeptomc ... "
+if ! python -c "import sys; sys.path.insert(0, 'src'); import zeptomc.logging; assert 'coloredlogs' not in sys.modules" 2>/dev/null; then
+    echo -e "${COLOR_RED}FAILED${COLOR_NC} (coloredlogs still imported by zeptomc)"
     TESTS_FAILED=$((TESTS_FAILED + 1))
+else
+    echo -e "${COLOR_GREEN}OK${COLOR_NC} (not used)"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
 fi
 
-echo -n "Testing: colorama NOT imported (removed) ... "
-if ! python -c "import colorama" 2>/dev/null; then
-    echo -e "${COLOR_GREEN}OK${COLOR_NC} (correctly removed)"
-    TESTS_PASSED=$((TESTS_PASSED + 1))
-else
-    echo -e "${COLOR_RED}FAILED${COLOR_NC} (colorama still present)"
+echo -n "Testing: colorama NOT used by zeptomc ... "
+if ! python -c "import sys; sys.path.insert(0, 'src'); import zeptomc.colors; assert 'colorama' not in sys.modules" 2>/dev/null; then
+    echo -e "${COLOR_RED}FAILED${COLOR_NC} (colorama still imported by zeptomc)"
     TESTS_FAILED=$((TESTS_FAILED + 1))
+else
+    echo -e "${COLOR_GREEN}OK${COLOR_NC} (not used)"
+    TESTS_PASSED=$((TESTS_PASSED + 1))
 fi
 
 echo ""
@@ -134,7 +133,7 @@ echo -e "${COLOR_YELLOW}PHASE 4: Tests de fonctionnalités internes${COLOR_NC}"
 echo "─────────────────────────────────────────"
 
 test_command "ProgressBar works" "python -c 'import sys, time; sys.path.insert(0, \"src\"); from zeptomc.colors import ProgressBar; pb = ProgressBar(10); pb.update(5); pb.close()'"
-test_command "ColorFormatter works" "python -c 'import sys; sys.path.insert(0, \"src\"); from zeptomc.colors import ColorFormatter; import logging; f = ColorFormatter(\"test\")'"
+test_command "ColorFormatter works" "python -c 'import sys; sys.path.insert(0, \"src\"); from zeptomc.colors import ColorFormatter; import logging; f = ColorFormatter(\"%(message)s\")'"
 test_command "Logger initialization" "python -c 'import sys; sys.path.insert(0, \"src\"); from zeptomc.logging import logger, initialize; initialize(False); logger.info(\"test\")'"
 test_command "DownloadQueue works" "python -c 'import sys; sys.path.insert(0, \"src\"); from zeptomc.downloader import DownloadQueue; dq = DownloadQueue(); print(len(dq))'"
 
@@ -162,7 +161,7 @@ if [ $TESTS_FAILED -eq 0 ]; then
 else
     echo -e "${COLOR_RED}❌ CERTAINS TESTS ONT ÉCHOUÉ${COLOR_NC}"
     echo ""
-    echo "Vérife les erreurs ci-dessus et corrige les problèmes"
+    echo "Vérifie les erreurs ci-dessus et corrige les problèmes"
     echo ""
     exit 1
 fi

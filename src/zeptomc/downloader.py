@@ -18,7 +18,7 @@ from zeptomc.colors import ProgressBar
 def DlTempFile(*args, default_mode=0o666, try_delete=True, **kwargs):
     """A NamedTemporaryFile which is created with permissions as per
     the current umask. It is removed after exiting the context manager,
-    but only if it stil exists."""
+    but only if it still exists."""
     if kwargs.get("delete", False):
         raise ValueError("delete must be False")
     kwargs["delete"] = False
@@ -109,7 +109,7 @@ class Downloader:
 
     def download(self):
         logger.debug("Downloading {} files.".format(self.total))
-        disable_progressbar = picomc.logging.debug
+        disable_progressbar = zeptomc.logging.debug
 
         if self.known_size:
             cm_progressbar = ProgressBar(

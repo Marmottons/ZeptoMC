@@ -240,7 +240,7 @@ class Version:
         logger.debug("Attempting to use jarfile: {}".format(self.jarfile))
         dlspec = self.vspec.downloads.get("client", None)
         if dlspec is None:
-            logger.debug("jarfile dlspec not availble, skipping hash check.")
+            logger.debug("jarfile dlspec not available, skipping hash check.")
             if not self.jarfile.exists():
                 die("jarfile does not exist and can not be downloaded.")
             return
@@ -358,8 +358,8 @@ class Version:
         if hasattr(self, "raw_asset_index"):
             self.download_assets(verify_hashes)
 
-    def prepare_launch(self, gamedir, java_info, verify_hahes=False):
-        self.prepare(java_info, verify_hahes)
+    def prepare_launch(self, gamedir, java_info, verify_hashes=False):
+        self.prepare(java_info, verify_hashes)
         self.prepare_assets_launch(gamedir)
 
 

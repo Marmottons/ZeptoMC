@@ -15,9 +15,9 @@ from zeptomc.windows import get_appdata
 def get_default_root():
     logger.debug("Resolving default application root")
     platforms = {
-        "linux": lambda: Path("~/.local/share/picomc").expanduser(),
-        "win32": lambda: get_appdata() / ".picomc",
-        "darwin": lambda: Path("~/Library/Application Support/picomc").expanduser(),
+        "linux": lambda: Path("~/.local/share/zeptomc").expanduser(),
+        "win32": lambda: get_appdata() / ".zeptomc",
+        "darwin": lambda: Path("~/Library/Application Support/zeptomc").expanduser(),
     }
     if sys.platform in platforms:
         return platforms[sys.platform]()
@@ -25,7 +25,7 @@ def get_default_root():
         # This is probably better than nothing and should be fine on most
         # widely-used platforms other than the supported ones. Too bad in
         # case of something exotic. Minecraft doesn't run on those anyway.
-        return Path("~/.picomc").expanduser()
+        return Path("~/.zeptomc").expanduser()
 
 
 DIRECTORY_MAP = {
@@ -85,7 +85,7 @@ class Launcher:
     def get_path(self, *pathsegments) -> Path:
         """Constructs a path relative to the Launcher root. `pathsegments` is
         specified similarly to `pathlib.PurePath`. Additionally, if the first
-        element of `pathsegments` is a `picomc.utils.Directory`, it is resolved."""
+        element of `pathsegments` is a `zeptomc.utils.Directory`, it is resolved."""
         it = iter(pathsegments)
         try:
             d = next(it)

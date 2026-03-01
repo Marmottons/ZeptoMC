@@ -161,7 +161,7 @@ class Instance:
         classpath = join_classpath(*libs)
 
         version_type, user_type = (
-            ("picomc", "mojang") if account.online else ("picomc/offline", "offline")
+            ("zeptomc", "mojang") if account.online else ("zeptomc/offline", "offline")
         )
 
         mc = v.vspec.mainClass
@@ -176,7 +176,7 @@ class Instance:
                 tmpl = Template(a)
                 res = tmpl.substitute(
                     natives_directory=natives,
-                    launcher_name="picomc",
+                    launcher_name="zeptomc",
                     launcher_version="1",
                     classpath=classpath,
                     version_name=v.version_name,
@@ -224,7 +224,7 @@ class Instance:
         ]
 
         if verify_hashes:
-            my_jvm_args.append("-Dpicomc.verify=true")
+            my_jvm_args.append("-Dzeptomc.verify=true")
 
         my_jvm_args += shlex.split(self.config["java.jvmargs"])
 
@@ -269,6 +269,8 @@ class InstanceManager:
     def rename(self, old, new):
         oldpath = self.get_root(old)
         newpath = self.get_root(new)
-        assert not os.path.exists(newpath)
-        assert os.path.exists(oldpath)
+        if os.path.exists(newpath):
+            raise InstanceError(f"Instance '{new}' already exists")
+        if not os.path.exists(oldpath):
+            raise InstanceNotFoundError(old)
         shutil.move(oldpath, newpath)

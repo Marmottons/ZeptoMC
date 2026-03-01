@@ -20,14 +20,14 @@ from zeptomc.utils import die
 #
 # Compiled with an antique version of java for widest compatibility.
 # Ideally we would distribute the source .java file and build it in the
-# picomc build process, but that would bring in a dependency for (old) java
+# zeptomc build process, but that would bring in a dependency for (old) java
 # and extra complexity.
 #
 
 
 def get_java_info(java):
     with TemporaryDirectory() as tmpdir:
-        with resources.open_binary("picomc.java", "SysDump.class") as incf, open(
+        with resources.files("zeptomc.java").joinpath("SysDump.class").open("rb") as incf, open(
             os.path.join(tmpdir, "SysDump.class"), "wb"
         ) as outcf:
             shutil.copyfileobj(incf, outcf)

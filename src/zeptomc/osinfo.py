@@ -31,7 +31,7 @@ class OsInfo:
     @staticmethod
     def get_os_version(java_info):
         if not java_info:
-            return None, None
+            return None
         version = java_info.get("os.version")
         return version
 

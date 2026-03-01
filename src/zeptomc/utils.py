@@ -3,7 +3,7 @@ import os
 import re
 import sys
 from enum import Enum, auto
-from functools import cached_property, partial
+from functools import partial
 from pathlib import Path
 
 from zeptomc.logging import logger
