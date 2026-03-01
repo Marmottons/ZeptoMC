@@ -1,6 +1,6 @@
 import logging
 
-import coloredlogs
+from picomc.colors import ColorFormatter
 
 logger = logging.getLogger("picomc.cli")
 debug = False
@@ -9,8 +9,8 @@ debug = False
 def initialize(debug_):
     global debug
     debug = debug_
-    coloredlogs.install(
-        level="DEBUG" if debug else "INFO",
-        fmt="%(levelname)s %(message)s",
-        logger=logger,
-    )
+    
+    handler = logging.StreamHandler()
+    handler.setFormatter(ColorFormatter("%(levelname)s %(message)s"))
+    logger.addHandler(handler)
+    logger.setLevel("DEBUG" if debug else "INFO")

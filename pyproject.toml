@@ -7,8 +7,6 @@ authors = [
 ]
 dependencies = [
     "click~=8.1",
-    "coloredlogs~=15.0",
-    "colorama~=0.4",
     "requests~=2.31",
     "tqdm~=4.66",
 ]

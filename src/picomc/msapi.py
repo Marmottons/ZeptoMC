@@ -1,9 +1,9 @@
-import colorama
 import requests
 from requests.exceptions import RequestException
 
 from picomc.errors import AuthenticationError, RefreshError, ValidationError
 from picomc.logging import logger
+from picomc.colors import RED, BRIGHT, RESET
 
 URL_DEVICE_AUTH = "https://login.microsoftonline.com/consumers/oauth2/v2.0/devicecode"
 URL_TOKEN = "https://login.microsoftonline.com/consumers/oauth2/v2.0/token"
@@ -32,8 +32,8 @@ class MicrosoftAuthApi:
         link = j["verification_uri"]
 
         msg = msg.replace(
-            user_code, colorama.Fore.RED + user_code + colorama.Fore.RESET
-        ).replace(link, colorama.Style.BRIGHT + link + colorama.Style.NORMAL)
+            user_code, RED + user_code + RESET
+        ).replace(link, BRIGHT + link + RESET)
 
         logger.info(msg)
 
