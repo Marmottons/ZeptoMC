@@ -1,12 +1,13 @@
 import sys
 from contextlib import ExitStack, contextmanager
+from functools import cached_property
 from pathlib import Path, PurePath
 
 from zeptomc.account import AccountManager
 from zeptomc.config import Config, ConfigManager
 from zeptomc.instance import InstanceManager
 from zeptomc.logging import logger
-from zeptomc.utils import Directory, cached_property
+from zeptomc.utils import Directory
 from zeptomc.version import VersionManager
 from zeptomc.windows import get_appdata
 

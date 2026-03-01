@@ -3,7 +3,7 @@ import os
 import re
 import sys
 from enum import Enum, auto
-from functools import partial
+from functools import cached_property, partial
 from pathlib import Path
 
 from zeptomc.logging import logger
@@ -46,17 +46,3 @@ class Directory(Enum):
     INSTANCES = auto()
     LIBRARIES = auto()
     VERSIONS = auto()
-
-
-class CachedProperty:
-    def __init__(self, fn):
-        self.fn = fn
-
-    def __get__(self, obj, cls):
-        if obj is None:
-            return self
-        value = obj.__dict__[self.fn.__name__] = self.fn(obj)
-        return value
-
-
-cached_property = CachedProperty

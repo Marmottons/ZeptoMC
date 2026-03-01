@@ -1,9 +1,9 @@
 import json
 import os
 from contextlib import AbstractContextManager
+from functools import cached_property
 
 from zeptomc.logging import logger
-from zeptomc.utils import cached_property
 
 
 def get_default_java():
