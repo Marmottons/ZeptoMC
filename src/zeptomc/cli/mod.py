@@ -40,15 +40,5 @@ for loader in mod.LOADERS:
     loader.register_cli(loader_cli)
 
 
-@mod_cli.group("pack")
-def pack_cli():
-    """Install mod packs."""
-    pass
-
-
-for pack in mod.PACKS:
-    pack.register_cli(pack_cli)
-
-
 def register_mod_cli(zeptomc_cli):
     zeptomc_cli.add_command(mod_cli, name="mod")

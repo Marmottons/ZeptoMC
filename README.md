@@ -15,8 +15,7 @@ ZeptoMC est un lanceur Minecraft en ligne de commande (CLI) ultra-léger avec de
 - 🚀 Lancer Minecraft facilement
 - 📦 Gérer tes instances
 - 👤 Gérer tes comptes (Offline & Microsoft)
-- 🔨 Installer des mod loaders (Forge, Fabric, FTB)
-- 📥 Installer des modpacks depuis CurseForge
+- 🔨 Installer des mod loaders (Forge, Fabric)
 
 ### ✨ Caractéristiques
 
@@ -177,13 +176,6 @@ zeptomc mod loader forge install 1.20.1
 zeptomc mod loader fabric install 1.20.1
 ```
 
-#### Modpacks CurseForge
-
-```bash
-# Installer un modpack depuis son URL
-zeptomc mod pack install https://...
-```
-
 #### Options globales
 
 ```bash
@@ -241,9 +233,7 @@ src/zeptomc/
 │   └── config.py     # Configuration
 ├── mod/              # Support mod loaders
 │   ├── forge.py
-│   ├── fabric.py
-│   ├── ftb.py
-│   └── curse.py      # CurseForge
+│   └── fabric.py
 ├── launcher.py       # Classe principale
 ├── account.py        # Authentification
 ├── version.py        # Gestion versions
@@ -306,8 +296,7 @@ ZeptoMC is an ultra-lightweight Minecraft command-line launcher with minimal dep
 - 🚀 Launch Minecraft easily
 - 📦 Manage your instances
 - 👤 Manage your accounts (Offline & Microsoft)
-- 🔨 Install mod loaders (Forge, Fabric, FTB)
-- 📥 Install modpacks from CurseForge
+- 🔨 Install mod loaders (Forge, Fabric)
 
 ### ✨ Features
 
@@ -468,13 +457,6 @@ zeptomc mod loader forge install 1.20.1
 zeptomc mod loader fabric install 1.20.1
 ```
 
-#### CurseForge modpacks
-
-```bash
-# Install a modpack from its URL
-zeptomc mod pack install https://...
-```
-
 #### Global options
 
 ```bash
@@ -532,9 +514,7 @@ src/zeptomc/
 │   └── config.py     # Configuration
 ├── mod/              # Mod loaders support
 │   ├── forge.py
-│   ├── fabric.py
-│   ├── ftb.py
-│   └── curse.py      # CurseForge
+│   └── fabric.py
 ├── launcher.py       # Main class
 ├── account.py        # Authentication
 ├── version.py        # Version management

@@ -1,4 +1,3 @@
-from . import curse, fabric, forge, ftb
+from . import fabric, forge
 
 LOADERS = [fabric, forge]
-PACKS = [curse, ftb]
