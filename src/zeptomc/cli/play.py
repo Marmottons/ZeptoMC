@@ -2,7 +2,7 @@ import getpass
 
 import click
 
-from zeptomc.account import AccountError, OfflineAccount, OnlineAccount
+from zeptomc.account import AccountError, OfflineAccount, MicrosoftAccount
 from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_launcher
 
 
@@ -28,18 +28,17 @@ def play(launcher, am, im, target, account_name, verify):
             account = am.get_default()
         except AccountError:
             username = input("Choose your account name:\n> ")
-            email = input(
-                "\nIf you have a mojang account with a Minecraft license,\n"
-                "enter your email. Leave blank if you want to play offline:\n> "
-            )
-            if email:
-                account = OnlineAccount.new(am, username, email)
+            use_microsoft = input(
+                "\nDo you have a Microsoft account? (y/n, default: n):\n> "
+            ).lower() == "y"
+            
+            if use_microsoft:
+                account = MicrosoftAccount.new(am, username)
+                am.add(account)
+                account.authenticate()
             else:
                 account = OfflineAccount.new(am, username)
-            am.add(account)
-            if email:
-                password = getpass.getpass("\nPassword:\n> ")
-                account.authenticate(password)
+                am.add(account)
     
     # Determine if target is an instance name or a version
     instance_name = None

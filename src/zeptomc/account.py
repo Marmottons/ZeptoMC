@@ -3,7 +3,6 @@ import uuid
 from zeptomc.errors import RefreshError, ValidationError
 from zeptomc.logging import logger
 from zeptomc.msapi import MicrosoftAuthApi
-from zeptomc.yggdrasil import MojangYggdrasil
 
 
 class NAMESPACE_NULL:
@@ -33,8 +32,6 @@ class Account:
     def from_config(cls, am, name, config):
         if config.get("microsoft", False):
             c = MicrosoftAccount
-        elif config.get("online", False):
-            c = OnlineAccount
         else:
             c = OfflineAccount
         return c(name=name, _am=am, **config)
@@ -58,63 +55,6 @@ class OfflineAccount(Account):
 
     def can_launch_game(self):
         return True
-
-
-class OnlineAccount(Account):
-    DEFAULTS = {
-        "uuid": "-",
-        "online": True,
-        "gname": "-",
-        "access_token": "-",
-        "is_authenticated": False,
-        "username": "-",
-    }
-
-    fresh = False
-
-    @classmethod
-    def new(cls, am, name, username):
-        return cls(name=name, username=username, _am=am)
-
-    def validate(self):
-        r = self._am.yggdrasil.validate(self.access_token)
-        if r:
-            self.fresh = True
-        return r
-
-    def refresh(self, force=False):
-        if self.fresh and not force:
-            return False
-        if self.is_authenticated:
-            if self.validate():
-                return
-            else:
-                try:
-                    refresh = self._am.yggdrasil.refresh(self.access_token)
-                    self.access_token, self.uuid, self.gname = refresh
-                    self.fresh = True
-                    return True
-                except RefreshError as e:
-                    logger.error(
-                        "Failed to refresh access_token," " please authenticate again."
-                    )
-                    self.is_authenticated = False
-                    raise e
-                finally:
-                    self.save()
-        else:
-            raise AccountError("Not authenticated.")
-
-    def authenticate(self, password):
-        self.access_token, self.uuid, self.gname = self._am.yggdrasil.authenticate(
-            self.username, password
-        )
-        self.is_authenticated = True
-        self.fresh = True
-        self.save()
-
-    def can_launch_game(self):
-        return self.is_authenticated
 
 
 class MicrosoftAccount(Account):
@@ -179,7 +119,6 @@ class AccountManager:
 
     def __init__(self, launcher):
         self.config = launcher.config_manager.get(self.CONFIG_FILE, init=DEFAULT_CONFIG)
-        self.yggdrasil = MojangYggdrasil(self.config["client_token"])
         self.msapi = MicrosoftAuthApi()
 
     def list(self):

@@ -14,7 +14,7 @@ ZeptoMC est un lanceur Minecraft en ligne de commande (CLI) ultra-léger avec de
 
 - 🚀 Lancer Minecraft facilement
 - 📦 Gérer tes instances
-- 👤 Gérer tes comptes (Mojang & Microsoft)
+- 👤 Gérer tes comptes (Offline & Microsoft)
 - 🔨 Installer des mod loaders (Forge, Fabric, FTB)
 - 📥 Installer des modpacks depuis CurseForge
 
@@ -136,12 +136,22 @@ zeptomc instance config my-instance delete java.path
 
 #### Gérer les comptes
 
+ZeptoMC supporte deux types de comptes :
+- **Offline** : Jouer en mode hors ligne, pas d'authentification requise
+- **Microsoft** : Authentification Microsoft (compte Minecraft moderne)
+
 ```bash
 # Lister tous les comptes
 zeptomc account list
 
-# Créer un nouveau compte
-zeptomc account create
+# Créer un compte offline
+zeptomc account create mon-compte
+
+# Créer un compte Microsoft
+zeptomc account create mon-ms-compte --microsoft
+
+# Authentifier un compte Microsoft
+zeptomc account authenticate mon-ms-compte
 
 # Supprimer un compte
 zeptomc account remove NomCompte
@@ -298,7 +308,7 @@ ZeptoMC is an ultra-lightweight Minecraft command-line launcher with minimal dep
 
 - 🚀 Launch Minecraft easily
 - 📦 Manage your instances
-- 👤 Manage your accounts (Mojang & Microsoft)
+- 👤 Manage your accounts (Offline & Microsoft)
 - 🔨 Install mod loaders (Forge, Fabric, FTB)
 - 📥 Install modpacks from CurseForge
 
@@ -420,12 +430,22 @@ zeptomc instance config my-instance delete java.path
 
 #### Manage accounts
 
+ZeptoMC supports two types of accounts:
+- **Offline** : Play in offline mode, no authentication required
+- **Microsoft** : Microsoft authentication (modern Minecraft account)
+
 ```bash
 # List all accounts
 zeptomc account list
 
-# Create a new account
-zeptomc account create
+# Create an offline account
+zeptomc account create my-account
+
+# Create a Microsoft account
+zeptomc account create my-ms-account --microsoft
+
+# Authenticate a Microsoft account
+zeptomc account authenticate my-ms-account
 
 # Remove an account
 zeptomc account remove AccountName

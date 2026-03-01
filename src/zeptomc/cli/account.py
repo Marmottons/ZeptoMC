@@ -4,12 +4,10 @@ from zeptomc.account import (
     AccountError,
     MicrosoftAccount,
     OfflineAccount,
-    OnlineAccount,
     RefreshError,
 )
 from zeptomc.cli.utils import pass_account_manager
 from zeptomc.logging import logger
-from zeptomc.yggdrasil import AuthenticationError
 
 
 def account_cmd(fn):
@@ -36,18 +34,12 @@ def _list(am):
 
 @account_cli.command()
 @account_cmd
-@click.argument("mojang_username", required=False)
 @click.option("--ms", "--microsoft", "microsoft", is_flag=True, default=False)
 @pass_account_manager
-def create(am, account, mojang_username, microsoft):
+def create(am, account, microsoft):
     """Create an account."""
     try:
-        if mojang_username:
-            if microsoft:
-                logger.error("Do not use --microsoft with mojang_username argument")
-                return
-            acc = OnlineAccount.new(am, account, mojang_username)
-        elif microsoft:
+        if microsoft:
             acc = MicrosoftAccount.new(am, account)
         else:
             acc = OfflineAccount.new(am, account)
@@ -60,7 +52,7 @@ def create(am, account, mojang_username, microsoft):
 @account_cmd
 @pass_account_manager
 def authenticate(am, account):
-    """Retrieve access token from Mojang servers using password."""
+    """Authenticate a Microsoft account."""
 
     try:
         a = am.get(account)
@@ -70,17 +62,12 @@ def authenticate(am, account):
 
     try:
         if isinstance(a, OfflineAccount):
-            logger.error("Offline accounts cannot be authenticated")
-        elif isinstance(a, OnlineAccount):
-            import getpass
-
-            p = getpass.getpass("Password: ")
-            a.authenticate(p)
+            logger.error("Offline accounts do not require authentication")
         elif isinstance(a, MicrosoftAccount):
             a.authenticate()
         else:
             logger.error("Unknown account type")
-    except AuthenticationError as e:
+    except Exception as e:
         logger.error("Authentication failed: %s", e)
 
 
@@ -88,7 +75,7 @@ def authenticate(am, account):
 @account_cmd
 @pass_account_manager
 def refresh(am, account):
-    """Refresh access token with Mojang servers."""
+    """Refresh access token for a Microsoft account."""
     try:
         a = am.get(account)
         a.refresh()

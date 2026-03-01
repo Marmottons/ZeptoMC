@@ -116,7 +116,7 @@ def assert_java(java, wanted):
 
     except FileNotFoundError:
         die(
-            "Could not execute java at: {}. Have you installed it? Is it in yout PATH?".format(
+            "Could not execute java at: {}. Have you installed it? Is it in your PATH?".format(
                 java
             )
         )
