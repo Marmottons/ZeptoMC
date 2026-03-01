@@ -65,20 +65,26 @@ zeptomc play
 
 ### 📖 Utilisation
 
-#### Lancer Minecraft
+#### Lancer Minecraft (versions et instances)
 
 ```bash
 # Lancer avec version et compte par défaut
 zeptomc play
 
-# Lancer une version spécifique
+# Lancer une version spécifique (instance par défaut)
 zeptomc play 1.20.1
+
+# Lancer une instance spécifique (par son nom)
+zeptomc play my-instance
 
 # Lancer avec un compte spécifique
 zeptomc play --account NomCompte
 
 # Lancer version et compte spécifiques
 zeptomc play 1.20.1 --account MonsId
+
+# Lancer une instance avec compte spécifique
+zeptomc play my-instance --account MonsId
 ```
 
 #### Gérer les instances
@@ -90,7 +96,7 @@ zeptomc instance list
 # Créer une nouvelle instance
 zeptomc instance create my-instance
 
-# Lancer une instance (avec Minecraft vanilla)
+# Lancer une instance (alias pour 'play my-instance')
 zeptomc instance launch my-instance
 
 # Configurer une instance
@@ -324,20 +330,26 @@ zeptomc play
 
 ### 📖 Usage
 
-#### Launch Minecraft
+#### Launch Minecraft (versions and instances)
 
 ```bash
 # Launch with default version and account
 zeptomc play
 
-# Launch a specific version
+# Launch a specific version (default instance)
 zeptomc play 1.20.1
+
+# Launch a specific instance (by its name)
+zeptomc play my-instance
 
 # Launch with a specific account
 zeptomc play --account AccountName
 
 # Launch specific version and account
 zeptomc play 1.20.1 --account MyId
+
+# Launch an instance with a specific account
+zeptomc play my-instance --account MyId
 ```
 
 #### Manage instances
@@ -349,7 +361,7 @@ zeptomc instance list
 # Create a new instance
 zeptomc instance create my-instance
 
-# Launch an instance (with vanilla Minecraft)
+# Launch an instance (alias for 'play my-instance')
 zeptomc instance launch my-instance
 
 # Configure an instance

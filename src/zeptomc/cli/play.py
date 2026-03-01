@@ -7,14 +7,20 @@ from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_
 
 
 @click.command()
-@click.argument("version", required=False)
+@click.argument("target", required=False)
 @click.option("-a", "--account", "account_name")
 @click.option("--verify", is_flag=True, default=False)
 @pass_instance_manager
 @pass_account_manager
 @pass_launcher
-def play(launcher, am, im, version, account_name, verify):
-    """Play Minecraft without having to deal with stuff"""
+def play(launcher, am, im, target, account_name, verify):
+    """Play Minecraft with a version or instance.
+    
+    TARGET can be:
+    - A version (e.g., '1.20.1') - launches default instance
+    - An instance name - launches that instance with its version
+    - Empty - launches default instance with latest version
+    """
     if account_name:
         account = am.get(account_name)
     else:
@@ -34,9 +40,27 @@ def play(launcher, am, im, version, account_name, verify):
             if email:
                 password = getpass.getpass("\nPassword:\n> ")
                 account.authenticate(password)
-    if not im.exists("default"):
-        im.create("default", "latest")
-    inst = im.get("default")
+    
+    # Determine if target is an instance name or a version
+    instance_name = None
+    version = None
+    
+    if target:
+        if im.exists(target):
+            # It's an instance name
+            instance_name = target
+        else:
+            # It's a version (or will be used as version override)
+            version = target
+    
+    # Use the specified instance or default
+    if instance_name:
+        inst = im.get(instance_name)
+    else:
+        if not im.exists("default"):
+            im.create("default", "latest")
+        inst = im.get("default")
+    
     inst.launch(account, version, verify_hashes=verify)
 
 

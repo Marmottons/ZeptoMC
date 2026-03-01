@@ -61,7 +61,7 @@ def delete(im, instance_name):
 @pass_instance_manager
 @pass_account_manager
 def launch(am, im, instance_name, account, version_override, verify):
-    """Launch the instance."""
+    """Launch the instance (alias for 'play INSTANCE_NAME')."""
     if account is None:
         account = am.get_default()
     else:
