@@ -1,0 +1,334 @@
+================================================================================
+                    PLAN D'OPTIMISATION - ZeptoMC (picomc)
+                        Réduction dépendances & Cleanup
+================================================================================
+
+📊 ÉTAT ACTUEL
+─────────────
+Dépendances directes: 5 packages (click, requests, coloredlogs, colorama, tqdm)
+Dépendances transitives: 8 packages supplémentaires
+Lignes de code: 3 741 (30 fichiers Python)
+Fichiers inutiles détectés: 2 (requirements-dev.lock, .vscode/*)
+TODOs non résolus: 11
+Tests: Aucun
+
+================================================================================
+PHASE 1: CLEANUP RAPIDE (1-2 heures)
+================================================================================
+
+✓ 1.1 - Supprimer redondances évidentes
+────────────────────────────────────────
+  [ ] Supprimer requirements-dev.lock (identique à requirements.lock)
+  [ ] Ajouter .vscode/ au .gitignore
+  [ ] Documenter/fermer les 11 TODOs existants
+      - instance.py: 2 TODOs
+      - version.py: 1 TODO
+      - forge.py: 2 TODOs
+      - account.py: 2 HACKs
+      - config.py: 1 TODO
+      - windows.py: 1 HACK
+      - Vérifier s'ils sont pertinents ou obsolètes
+
+✓ 1.2 - Remplacer CachedProperty custom par stdlib
+────────────────────────────────────────────────────
+  [ ] Localiser @cached_property dans utils.py (62 lignes)
+  [ ] Remplacer par functools.cached_property (Python 3.8+)
+  [ ] Tester avec 'picomc play'
+  Gain: -10 lignes de code, -1 classe personnalisée
+
+✓ 1.3 - Fusionner logging (coloredlogs + colorama)
+───────────────────────────────────────────────────
+  [ ] Analyser utilisation coloredlogs vs colorama
+  [ ] Garder colorama (léger, Windows-focused)
+  [ ] Supprimer coloredlogs (utilisé une seule fois)
+  [ ] Adapter cli/logging.py pour utiliser colorama uniquement
+  [ ] Tester affichage couleurs sur Windows/Linux
+  Gain: -1 dépendance (coloredlogs + sa dépendance humanfriendly)
+
+================================================================================
+PHASE 2: OPTIMISATION ARCHITECTURE (2-3 heures)
+================================================================================
+
+✓ 2.1 - Réorganiser structure CLI (trop fragmentée)
+────────────────────────────────────────────────────
+  [ ] Fusionner cli/play.py (44L) + cli/config.py (56L) → cli/core.py
+  [ ] Regrouper sous-commandes logiquement connexes
+      - cli/account.py (gestion comptes) → OK, garder
+      - cli/instance.py (gestion instances) → OK, garder
+      - cli/mod.py (gestion mods) → OK, garder
+  [ ] Améliorer structure:
+      src/picomc/cli/
+      ├── __init__.py
+      ├── main.py (point d'entrée)
+      ├── account.py (create, list, authenticate, refresh, remove, setdefault)
+      ├── instance.py (create, list, launch, config, dir, delete, rename, natives)
+      ├── mod.py (loader, pack)
+      └── core.py (play, config, version)
+
+✓ 2.2 - Simplifier arguments CLI
+──────────────────────────────────
+  Objectif: Rendre --help plus clair et arguments cohérents
+
+  [Actuel] Problèmes identifiés:
+  - "picomc play VERSION" (VERSION en positional argument, pas clair)
+  - "picomc instance create" a trop d'options cachées
+  - "picomc mod" est trop cryptique (loader/pack sans descriptions)
+  - Pas de groupement logique (ex: --account-related vs --game-related)
+
+  [À faire]:
+  [ ] Ajouter descriptions détaillées pour chaque commande/option
+  [ ] Regrouper options via click.Group avec help context
+  [ ] Remplacer arguments positionnels par options explicites:
+      Avant: picomc play 1.20.1
+      Après: picomc play --version 1.20.1
+  [ ] Améliorer descriptions de sous-commandes:
+      Avant: "picomc mod loader"
+      Après: "picomc mod loader [forge|fabric|ftb] - Installer/gérer mod loaders"
+  [ ] Standardiser patterns d'options:
+      -a, --account TEXT → Cohérent partout
+      -r, --root TEXT → Cohérent partout
+  [ ] Ajouter examples dans --help:
+      Usage: picomc play [OPTIONS]
+      Options:
+        -v, --version TEXT     Minecraft version [default: latest]
+        -a, --account TEXT     Account name [default: first available]
+      Examples:
+        picomc play                         # Dernière version, compte par défaut
+        picomc play --version 1.20.1        # Version spécifique
+        picomc play --account MyAccount     # Compte spécifique
+
+  [ ] Tester tous les chemins avec le nouveau --help
+
+✓ 2.3 - Refactoriser forge.py (413 lignes = trop complexe)
+───────────────────────────────────────────────────────────
+  [ ] Identifier les 3-4 responsabilités principales
+  [ ] Diviser en modules:
+      src/picomc/mod/
+      ├── __init__.py
+      ├── forge/
+      │   ├── __init__.py
+      │   ├── installer.py (logique d'installation)
+      │   ├── api.py (appels API Forge)
+      │   └── parser.py (parsing métadonnées)
+      ├── fabric.py
+      ├── ftb.py
+      └── curse.py
+  [ ] Tester chaque loader séparément
+  [ ] Benchmark performance
+
+✓ 2.4 - Créer hiérarchie d'exceptions cohérente
+─────────────────────────────────────────────────
+  [Actuellement] Exceptions dispersées, pas de hiérarchie:
+  - PicomcError (errors.py)
+  - AuthenticationError (errors.py)
+  - RefreshError (errors.py)
+  - ValidationError (errors.py)
+  + exceptions locales dans forge.py, curse.py, etc.
+
+  [À faire]:
+  [ ] Créer src/picomc/exceptions.py avec hiérarchie:
+      PicomcError (base)
+      ├── AuthenticationError
+      ├── ModLoaderError
+      │   ├── ForgeError
+      │   ├── FabricError
+      │   └── FTBError
+      ├── DownloadError
+      └── ConfigurationError
+  [ ] Remplacer exceptions locales
+  [ ] Ajouter contexte aux exceptions (cause, suggestion)
+  [ ] Documenter chaque exception
+
+================================================================================
+PHASE 3: AMÉLIORATION --help (1-2 heures)
+================================================================================
+
+✓ 3.1 - Générer --help complet avec examples
+──────────────────────────────────────────────
+  [ ] Analyser structure actuelle (utilisateur click.Group)
+  [ ] Ajouter docstrings détaillés à chaque commande
+  [ ] Ajouter @click.help_option() avec formatage amélioré
+  [ ] Créer format personnalisé si nécessaire:
+      Exemple:
+      ┌─ picomc HELP ──────────────────────────┐
+      │ Launch Minecraft with picomc           │
+      │                                        │
+      │ COMMANDS:                              │
+      │   play         🎮 Play Minecraft      │
+      │   instance     📦 Manage instances    │
+      │   account      👤 Manage accounts     │
+      │   mod          🔨 Manage mods         │
+      │   version      📚 List versions       │
+      │   config       ⚙️  Edit config         │
+      │                                        │
+      │ OPTIONS:                               │
+      │   --debug                Debug logs    │
+      │   -r, --root PATH      Data directory │
+      │   --version            Show version   │
+      │   --help               This message   │
+      │                                        │
+      │ EXAMPLES:                              │
+      │   picomc play                          │
+      │   picomc instance create              │
+      │   picomc mod loader forge install     │
+      └────────────────────────────────────────┘
+
+  [ ] Tester: picomc --help, picomc play --help, etc.
+
+✓ 3.2 - Créer documentation CLI dans README
+──────────────────────────────────────────────
+  [ ] Ajouter section "Quick Start"
+  [ ] Ajouter section "Commands Reference"
+  [ ] Ajouter section "Examples"
+  [ ] Lister toutes les options principales
+
+================================================================================
+PHASE 4: RÉDUCTION DÉPENDANCES (1-2 heures)
+================================================================================
+
+✓ 4.1 - Audit détaillé des dépendances
+────────────────────────────────────────
+  [ ] Vérifier utilisation de chaque dépendance:
+      - click (CLI) → ESSENTIEL
+      - requests (HTTP) → ESSENTIEL
+      - tqdm (progress bars) → À vérifier (vraiment nécessaire?)
+      - colorama (couleurs) → Garder
+      - coloredlogs → SUPPRIMER (phase 1)
+
+  [ ] Rechercher alternatives plus légères:
+      - tqdm vs affichage manuel → Benchmark
+      - requests vs urllib3 natif → Trop complexe, garder requests
+      - click vs argparse natif → click meilleur, garder
+
+✓ 4.2 - Minimiser dépendances transitives
+───────────────────────────────────────────
+  [Actuellement] 8 dépendances transitives
+  [ ] Vérifier si on peut réduire via:
+      - Remplacer certains calls requests par urllib3 direct (risky)
+      - Utiliser json natif au lieu de parsing XML (pour Forge?)
+      - Audit des imports réels vs déclarés
+
+  [Risque]: Ne pas casser la fonctionnalité pour gagner 1-2 deps
+
+================================================================================
+PHASE 5: TESTS & VALIDATION (2-3 heures)
+================================================================================
+
+✓ 5.1 - Créer tests de régression basiques
+────────────────────────────────────────────
+  [ ] Créer structure tests/:
+      tests/
+      ├── __init__.py
+      ├── conftest.py (fixtures commune)
+      ├── test_cli.py (commandes CLI)
+      ├── test_account.py (authentification)
+      ├── test_instance.py (instances)
+      ├── test_mod.py (mod loaders)
+      └── test_downloader.py (téléchargements)
+
+  [ ] Tester chaque commande principale:
+      - picomc --help
+      - picomc account --help
+      - picomc instance --help
+      - picomc play --help
+      etc.
+
+  [ ] Tests d'intégration minimaux:
+      - Créer/lister une instance
+      - Créer/lister un compte
+      - Installer un mod loader
+
+✓ 5.2 - Tests manuels finaux
+──────────────────────────────
+  [ ] Sur Linux: test complet
+  [ ] Sur Windows VM si possible: couleurs, chemins, UWP
+  [ ] Vérifier exit codes et messages d'erreur
+
+================================================================================
+PHASE 6: DOCUMENTATION (1 heure)
+================================================================================
+
+✓ 6.1 - Documenter les changements
+────────────────────────────────────
+  [ ] Mettre à jour README.md avec:
+      - Dépendances réduites (avant/après)
+      - Arguments simplifiés
+      - Exemples d'utilisation
+      - Architecture refactorisée
+
+  [ ] Créer ARCHITECTURE.md explicant:
+      - Structure des modules
+      - Flux de données
+      - Hiérarchie d'exceptions
+      - Extensibilité (ajouter nouveau loader, etc.)
+
+  [ ] Créer CHANGELOG.md pour:
+      - Nettoyage et optimisations
+      - Changements d'interface CLI
+      - Notes de migration si breaking changes
+
+================================================================================
+RÉSUMÉ DU PLAN
+================================================================================
+
+Phase 1 (Cleanup): 1-2h
+├─ Supprimer redondances
+├─ Remplacer CachedProperty custom
+├─ Fusionner logging
+└─ Coût: Trivial | Gain: -2 fichiers, -1 dépendance
+
+Phase 2 (Architecture): 2-3h
+├─ Réorganiser CLI
+├─ Simplifier arguments
+├─ Refactoriser forge.py
+└─ Coût: Moyen | Gain: Meilleure maintenabilité
+
+Phase 3 (Help): 1-2h
+├─ Améliorer --help
+├─ Ajouter examples
+└─ Coût: Faible | Gain: UX amélioré
+
+Phase 4 (Dépendances): 1-2h
+├─ Audit détaillé
+├─ Rechercher alternatives
+└─ Coût: Moyen | Gain: -1 à 2 dépendances
+
+Phase 5 (Tests): 2-3h
+├─ Créer tests de régression
+├─ Tests manuels
+└─ Coût: Moyen | Gain: Robustesse
+
+Phase 6 (Doc): 1h
+├─ Mettre à jour README
+├─ Créer ARCHITECTURE.md
+└─ Coût: Faible | Gain: Maintenabilité
+
+────────────────────────────────
+TEMPS TOTAL: 8-13 heures
+ORDRE RECOMMANDÉ: Phase 1 → 3 → 2 → 4 → 5 → 6
+(Les phases ne sont pas bloquantes)
+════════════════════════════════════════════════════════════════════════════
+
+⚠️ AVERTISSEMENTS IMPORTANTS
+────────────────────────────
+
+1. AVANT CHAQUE CHANGEMENT MAJEUR:
+   - Faire un git commit de l'état actuel
+   - Créer une branche dédiée (feat/cleanup, feat/cli-simplification)
+
+2. TESTS OBLIGATOIRES APRÈS:
+   - picomc play --help
+   - picomc account list
+   - picomc instance list
+   - picomc play (si possible avec une vraie instance)
+
+3. BREAKING CHANGES POTENTIELS:
+   - Changement arguments CLI → Documenter dans CHANGELOG
+   - Changement structure répertoires → Documenter migration
+
+4. RESTER PRAGMATIQUE:
+   - Ne pas optimiser à tout prix
+   - Si une dépendance est utile → garder
+   - Si un fichier est stable → ne pas refactoriser
+
+════════════════════════════════════════════════════════════════════════════
