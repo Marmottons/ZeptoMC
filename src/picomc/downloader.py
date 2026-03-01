@@ -8,10 +8,10 @@ from contextlib import contextmanager
 
 import certifi
 import urllib3
-from tqdm import tqdm
 
 import picomc.logging
 from picomc.logging import logger
+from picomc.colors import ProgressBar
 
 
 @contextmanager
@@ -112,7 +112,7 @@ class Downloader:
         disable_progressbar = picomc.logging.debug
 
         if self.known_size:
-            cm_progressbar = tqdm(
+            cm_progressbar = ProgressBar(
                 total=self.total_size,
                 disable=disable_progressbar,
                 unit_divisor=1024,
@@ -120,7 +120,7 @@ class Downloader:
                 unit_scale=True,
             )
         else:
-            cm_progressbar = tqdm(total=self.total, disable=disable_progressbar)
+            cm_progressbar = ProgressBar(total=self.total, disable=disable_progressbar)
 
         with cm_progressbar as tq, ThreadPoolExecutor(max_workers=self.workers) as tpe:
             for i, (url, dest) in enumerate(self.queue, start=1):

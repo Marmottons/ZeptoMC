@@ -11,11 +11,11 @@ from zipfile import ZipFile
 
 import click
 import requests
-from tqdm import tqdm
 
 from picomc.cli.utils import pass_instance_manager, pass_launcher
 from picomc.downloader import DownloadQueue
 from picomc.logging import logger
+from picomc.colors import ProgressBar
 from picomc.mod import forge
 from picomc.utils import Directory, die, sanitize_name
 
@@ -130,7 +130,7 @@ def install_from_zip(zipfileobj, launcher, instance_manager, instance_name=None)
         modcount = len(project_files)
         mcdir: Path = inst.get_minecraft_dir()
         moddir = mcdir / "mods"
-        with tqdm(total=modcount) as tq:
+        with ProgressBar(total=modcount) as tq:
             # Try to get as many file_infos as we can in one request
             # This endpoint only provides a few "latest" files for each project,
             # so it's not guaranteed that the response will contain the fileID
