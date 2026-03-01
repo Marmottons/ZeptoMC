@@ -115,6 +115,25 @@ zeptomc instance natives my-instance
 zeptomc instance dir my-instance
 ```
 
+#### Configurer Java pour une instance
+
+```bash
+# Changer le chemin Java pour une instance
+zeptomc instance config my-instance java-path /usr/bin/java8
+
+# Changer les arguments JVM pour une instance
+zeptomc instance config my-instance java-args -XX:+UseG1GC -Xms512M -Xmx2G
+
+# Voir la configuration d'une instance
+zeptomc instance config my-instance show
+
+# Voir une valeur spécifique
+zeptomc instance config my-instance get java.path
+
+# Supprimer une configuration
+zeptomc instance config my-instance delete java.path
+```
+
 #### Gérer les comptes
 
 ```bash
@@ -378,6 +397,25 @@ zeptomc instance natives my-instance
 
 # Show instance directory
 zeptomc instance dir my-instance
+```
+
+#### Configure Java for an instance
+
+```bash
+# Change the Java executable path for an instance
+zeptomc instance config my-instance java-path /usr/bin/java8
+
+# Change the JVM arguments for an instance
+zeptomc instance config my-instance java-args -XX:+UseG1GC -Xms512M -Xmx2G
+
+# Show the instance configuration
+zeptomc instance config my-instance show
+
+# Get a specific configuration value
+zeptomc instance config my-instance get java.path
+
+# Delete a configuration value
+zeptomc instance config my-instance delete java.path
 ```
 
 #### Manage accounts

@@ -168,5 +168,27 @@ def config_delete(config, key):
         print("No such item.")
 
 
+@config_cli.command("java-path")
+@click.argument("path")
+@click.pass_obj
+def config_java_path(config, path):
+    """Set the Java executable path for this instance."""
+    config["java.path"] = path
+    print(f"Java path set to: {path}")
+
+
+@config_cli.command("java-args", context_settings=dict(ignore_unknown_options=True, allow_interspersed_args=False))
+@click.argument("args", required=True, nargs=-1)
+@click.pass_obj
+def config_java_args(config, args):
+    """Set the JVM arguments for this instance.
+    
+    Example: zeptomc instance config default java-args -XX:+UseG1GC -Xms512M
+    """
+    java_args = " ".join(args)
+    config["java.jvmargs"] = java_args
+    print(f"Java arguments set to: {java_args}")
+
+
 def register_instance_cli(zeptomc_cli):
     zeptomc_cli.add_command(instance_cli, name="instance")
