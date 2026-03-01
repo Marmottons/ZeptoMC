@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Wrapper pour lancer picomc depuis le répertoire du projet
+# Utilise le code source directement (dev mode)
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PYTHONPATH="$SCRIPT_DIR/src:$PYTHONPATH"
+
+python -c "
+import sys
+sys.path.insert(0, '$SCRIPT_DIR/src')
+from picomc import main
+main()
+" "$@"

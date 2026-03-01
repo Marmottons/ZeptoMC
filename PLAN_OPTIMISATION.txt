@@ -154,23 +154,23 @@ PHASE 3: AMÉLIORATION --help (1-2 heures)
       │ Launch Minecraft with picomc           │
       │                                        │
       │ COMMANDS:                              │
-      │   play         🎮 Play Minecraft      │
-      │   instance     📦 Manage instances    │
-      │   account      👤 Manage accounts     │
-      │   mod          🔨 Manage mods         │
-      │   version      📚 List versions       │
+      │   play         🎮 Play Minecraft       │
+      │   instance     📦 Manage instances     │
+      │   account      👤 Manage accounts      │
+      │   mod          🔨 Manage mods          │
+      │   version      📚 List versions        │
       │   config       ⚙️  Edit config         │
       │                                        │
       │ OPTIONS:                               │
       │   --debug                Debug logs    │
-      │   -r, --root PATH      Data directory │
-      │   --version            Show version   │
-      │   --help               This message   │
+      │   -r, --root PATH      Data directory  │
+      │   --version            Show version    │
+      │   --help               This message    │
       │                                        │
       │ EXAMPLES:                              │
       │   picomc play                          │
-      │   picomc instance create              │
-      │   picomc mod loader forge install     │
+      │   picomc instance create               │
+      │   picomc mod loader forge install      │
       └────────────────────────────────────────┘
 
   [ ] Tester: picomc --help, picomc play --help, etc.
