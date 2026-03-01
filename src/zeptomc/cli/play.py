@@ -8,19 +8,24 @@ from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_
 
 @click.command()
 @click.argument("target", required=False)
-@click.option("-a", "--account", "account_name")
-@click.option("--verify", is_flag=True, default=False)
+@click.option("-a", "--account", "account_name", help="Account to use (default: saved account)")
+@click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
 @pass_instance_manager
 @pass_account_manager
 @pass_launcher
 def play(launcher, am, im, target, account_name, verify):
-    """Play Minecraft with a version or instance.
+    """Launch Minecraft instantly.
     
     TARGET can be:
-    - A version (e.g., '1.20.1') - launches default instance
-    - An instance name - launches that instance with its version
-    - Empty - launches default instance with latest version
-    """
+      • Empty = Default instance, latest version
+      • Version (e.g., '1.20.1') = Default instance, specific version
+      • Instance name (e.g., 'vanilla') = That instance, its version
+    
+    Examples:
+      zeptomc play                    # Launch with defaults
+      zeptomc play 1.20.1             # Launch 1.20.1
+      zeptomc play my-modded-world    # Launch instance
+      zeptomc play --account steve    # Use specific account"""
     if account_name:
         account = am.get(account_name)
     else:

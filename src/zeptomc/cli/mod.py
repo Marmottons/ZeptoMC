@@ -5,7 +5,15 @@ from zeptomc import mod
 
 @click.group()
 def mod_cli():
-    """Helpers to install modded Minecraft."""
+    """Install and manage mod loaders.
+    
+    Mod loaders add support for mods and modpacks to Minecraft.
+    Supported loaders: Forge, Fabric
+    
+    Examples:
+      zeptomc mod loader list          # Show available loaders
+      zeptomc mod loader forge 1.20.1  # Install Forge for 1.20.1
+      zeptomc mod loader fabric 1.20   # Install Fabric for 1.20"""
     pass
 
 
@@ -28,11 +36,10 @@ def list_loaders(ctx, param, value):
     help="List available mod loaders",
 )
 def loader_cli():
-    """Manage mod loaders.
-
-    Loaders are customized Minecraft
-    versions which can load other mods, e.g. Forge or Fabric.
-    Installing a loader creates a new version which can be used by instances."""
+    """Install and manage mod loaders (Forge, Fabric).
+    
+    A mod loader allows you to run mods and modpacks.
+    Each loader creates a new Minecraft version that can be used in instances."""
     pass
 
 

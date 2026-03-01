@@ -16,14 +16,23 @@ def account_cmd(fn):
 
 @click.group()
 def account_cli():
-    """Manage your accounts."""
+    """Manage Minecraft accounts.
+    
+    Supported types:
+      • Offline: Play locally without authentication (default)
+      • Microsoft: Use your Microsoft account (online play)
+    
+    Examples:
+      zeptomc account create my-account        # Create offline account
+      zeptomc account authenticate ms-account  # Create & auth Microsoft account
+      zeptomc account list                     # Show all accounts"""
     pass
 
 
 @account_cli.command("list")
 @pass_account_manager
 def _list(am):
-    """List avaiable accounts."""
+    """List all accounts (marked with *)."""
     alist = am.list()
     if alist:
         lines = ("{}{}".format("* " if am.is_default(u) else "  ", u) for u in alist)
@@ -36,7 +45,13 @@ def _list(am):
 @account_cmd
 @pass_account_manager
 def create(am, account):
-    """Create an offline account."""
+    """Create a new offline account.
+    
+    Usage: zeptomc account create ACCOUNT_NAME
+    
+    Examples:
+      zeptomc account create Steve
+      zeptomc account create my-offline-profile"""
     try:
         acc = OfflineAccount.new(am, account)
         am.add(acc)
@@ -49,7 +64,17 @@ def create(am, account):
 @account_cmd
 @pass_account_manager
 def authenticate(am, account):
-    """Authenticate a Microsoft account (creates it if it doesn't exist)."""
+    """Create and authenticate a Microsoft account.
+    
+    Usage: zeptomc account authenticate ACCOUNT_NAME
+    
+    This will:
+      1. Create a new Microsoft account if it doesn't exist
+      2. Launch Microsoft login in your browser
+      3. Save your credentials locally
+    
+    Example:
+      zeptomc account authenticate my-ms-account"""
 
     try:
         a = am.get(account)
@@ -78,7 +103,7 @@ def authenticate(am, account):
 @account_cmd
 @pass_account_manager
 def refresh(am, account):
-    """Refresh access token for a Microsoft account."""
+    """Refresh a Microsoft account token."""
     try:
         a = am.get(account)
         a.refresh()
@@ -90,7 +115,7 @@ def refresh(am, account):
 @account_cmd
 @pass_account_manager
 def remove(am, account):
-    """Remove the account."""
+    """Delete an account (cannot be undone)."""
     try:
         am.remove(account)
     except AccountError as e:
@@ -101,7 +126,7 @@ def remove(am, account):
 @account_cmd
 @pass_account_manager
 def setdefault(am, account):
-    """Set the account as default."""
+    """Set the default account for launching games."""
     try:
         default = am.get(account)
         am.set_default(default)

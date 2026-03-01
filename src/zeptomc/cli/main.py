@@ -31,8 +31,8 @@ def click_print_version(ctx, param, value):
 
 
 @click.group()
-@click.option("--debug/--no-debug", default=None)
-@click.option("-r", "--root", help="Application data directory.", default=None)
+@click.option("--debug/--no-debug", default=None, help="Enable debug mode with detailed logs")
+@click.option("-r", "--root", help="Custom data directory (default: ~/.zeptomc)", default=None)
 @click.option(
     "--version",
     is_flag=True,
@@ -42,7 +42,14 @@ def click_print_version(ctx, param, value):
 )
 @click.pass_context
 def zeptomc_cli(ctx: click.Context, debug, root):
-    """zeptomc is a minimal CLI Minecraft launcher."""
+    """A minimal, lightweight Minecraft launcher with no bloat.
+    
+    Quick start:
+      zeptomc play              # Launch Minecraft
+      zeptomc account create    # Create an offline account
+      zeptomc instance list     # Show your instances
+    
+    For more help: zeptomc COMMAND --help"""
     logging.initialize(debug)
 
     if debug:

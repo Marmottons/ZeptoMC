@@ -19,7 +19,15 @@ def instance_cmd(fn):
 
 @click.group()
 def instance_cli():
-    """Manage your instances."""
+    """Manage game instances.
+    
+    An instance is a directory with its own Minecraft version, mods, and settings.
+    You can have multiple instances with different versions or configurations.
+    
+    Examples:
+      zeptomc instance create vanilla          # Create vanilla 1.20.1
+      zeptomc instance create forge18 1.18.2   # Create 1.18.2 with Forge
+      zeptomc instance list                    # Show all instances"""
     pass
 
 
@@ -28,7 +36,13 @@ def instance_cli():
 @click.argument("version", default="latest")
 @pass_instance_manager
 def create(im, instance_name, version):
-    """Create a new instance."""
+    """Create a new instance.
+    
+    Usage: zeptomc instance create INSTANCE [VERSION]
+    
+    Examples:
+      zeptomc instance create my-world           # Latest version
+      zeptomc instance create retro-game 1.12.2  # Specific version"""
     if im.exists(instance_name):
         logger.error("An instance with that name already exists.")
         return
@@ -38,7 +52,7 @@ def create(im, instance_name, version):
 @instance_cli.command()
 @pass_instance_manager
 def list(im):
-    """Show a list of instances."""
+    """Show all instances."""
     print("\n".join(im.list()))
 
 
@@ -46,7 +60,7 @@ def list(im):
 @instance_cmd
 @pass_instance_manager
 def delete(im, instance_name):
-    """Delete the instance (from disk)."""
+    """Delete an instance permanently (cannot be undone)."""
     if im.exists(instance_name):
         im.delete(instance_name)
     else:
@@ -55,13 +69,19 @@ def delete(im, instance_name):
 
 @instance_cli.command()
 @instance_cmd
-@click.option("--verify", is_flag=True, default=False)
-@click.option("-a", "--account", default=None)
-@click.option("--version-override", default=None)
+@click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
+@click.option("-a", "--account", default=None, help="Account to use (default: saved account)")
+@click.option("--version-override", default=None, help="Override instance version")
 @pass_instance_manager
 @pass_account_manager
 def launch(am, im, instance_name, account, version_override, verify):
-    """Launch the instance (alias for 'play INSTANCE_NAME')."""
+    """Launch a specific instance.
+    
+    Usage: zeptomc instance launch INSTANCE_NAME [OPTIONS]
+    
+    Examples:
+      zeptomc instance launch my-world
+      zeptomc instance launch my-world --account steve"""
     if account is None:
         account = am.get_default()
     else:
@@ -121,7 +141,14 @@ def rename(im, instance_name, new_name):
 @pass_instance_manager
 @click.pass_context
 def config_cli(ctx, im, instance_name):
-    """Configure an instance."""
+    """Configure instance settings.
+    
+    Manage Java path, JVM args, and other instance settings.
+    
+    Examples:
+      zeptomc instance config my-world show                   # Show all settings
+      zeptomc instance config my-world java-path /usr/bin/java
+      zeptomc instance config my-world java-args -Xmx4G"""
     if im.exists(instance_name):
         ctx.obj = im.get(instance_name).config
     else:
@@ -131,7 +158,7 @@ def config_cli(ctx, im, instance_name):
 @config_cli.command("show")
 @click.pass_obj
 def config_show(config):
-    """Print the current instance config."""
+    """Display all instance configuration."""
 
     for k, v in config.items():
         print("{}: {}".format(k, v))
@@ -142,7 +169,9 @@ def config_show(config):
 @click.argument("value")
 @click.pass_obj
 def config_set(config, key, value):
-    """Set an instance config value."""
+    """Set a configuration value.
+    
+    Usage: zeptomc instance config INSTANCE set KEY VALUE"""
     config[key] = value
 
 
@@ -150,7 +179,7 @@ def config_set(config, key, value):
 @click.argument("key")
 @click.pass_obj
 def config_get(config, key):
-    """Print an instance config value."""
+    """Get a configuration value."""
     try:
         print(config[key])
     except KeyError:
@@ -161,7 +190,7 @@ def config_get(config, key):
 @click.argument("key")
 @click.pass_obj
 def config_delete(config, key):
-    """Delete a key from the instance config."""
+    """Delete a configuration key."""
     try:
         del config[key]
     except KeyError:
@@ -172,7 +201,12 @@ def config_delete(config, key):
 @click.argument("path")
 @click.pass_obj
 def config_java_path(config, path):
-    """Set the Java executable path for this instance."""
+    """Set the Java executable path for this instance.
+    
+    Usage: zeptomc instance config INSTANCE java-path /path/to/java
+    
+    Example:
+      zeptomc instance config my-world java-path /usr/lib/jvm/java-21-openjdk/bin/java"""
     config["java.path"] = path
     print(f"Java path set to: {path}")
 

@@ -23,17 +23,25 @@ def version_cmd(fn):
 
 @click.group()
 def version_cli():
-    """Manage Minecraft versions."""
+    """Manage Minecraft versions.
+    
+    Download and manage different Minecraft versions.
+    By default shows only locally installed versions.
+    
+    Examples:
+      zeptomc version list                # Show installed versions
+      zeptomc version list --all          # Show all available versions
+      zeptomc version prepare 1.20.1      # Download version 1.20.1"""
     pass
 
 
 @version_cli.command()
-@click.option("--release", is_flag=True, default=False)
-@click.option("--snapshot", is_flag=True, default=False)
-@click.option("--alpha", is_flag=True, default=False)
-@click.option("--beta", is_flag=True, default=False)
-@click.option("--local", is_flag=True, default=False)
-@click.option("--all", is_flag=True, default=False)
+@click.option("--release", is_flag=True, default=False, help="Show release versions")
+@click.option("--snapshot", is_flag=True, default=False, help="Show snapshot versions")
+@click.option("--alpha", is_flag=True, default=False, help="Show alpha versions")
+@click.option("--beta", is_flag=True, default=False, help="Show beta versions")
+@click.option("--local", is_flag=True, default=False, help="Show locally installed")
+@click.option("--all", is_flag=True, default=False, help="Show all available versions")
 @pass_version_manager
 def list(vm, release, snapshot, alpha, beta, local, all):
     """List available Minecraft versions."""
@@ -52,9 +60,14 @@ def list(vm, release, snapshot, alpha, beta, local, all):
 
 @version_cli.command()
 @version_cmd
-@click.option("--verify", is_flag=True, default=False)
+@click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
 def prepare(version, verify):
-    """Download required files for the version."""
+    """Download and prepare a Minecraft version.
+    
+    Usage: zeptomc version prepare VERSION [OPTIONS]
+    
+    Example:
+      zeptomc version prepare 1.20.1"""
     version.prepare(verify_hashes=verify)
 
 
