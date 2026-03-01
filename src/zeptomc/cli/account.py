@@ -34,16 +34,13 @@ def _list(am):
 
 @account_cli.command()
 @account_cmd
-@click.option("--ms", "--microsoft", "microsoft", is_flag=True, default=False)
 @pass_account_manager
-def create(am, account, microsoft):
-    """Create an account."""
+def create(am, account):
+    """Create an offline account."""
     try:
-        if microsoft:
-            acc = MicrosoftAccount.new(am, account)
-        else:
-            acc = OfflineAccount.new(am, account)
+        acc = OfflineAccount.new(am, account)
         am.add(acc)
+        logger.info(f"Offline account '{account}' created successfully")
     except AccountError as e:
         logger.error("Could not create account: %s", e)
 
@@ -52,19 +49,25 @@ def create(am, account, microsoft):
 @account_cmd
 @pass_account_manager
 def authenticate(am, account):
-    """Authenticate a Microsoft account."""
+    """Authenticate a Microsoft account (creates it if it doesn't exist)."""
 
     try:
         a = am.get(account)
-    except AccountError:
-        logger.error("AccountError", exc_info=True)
-        return
-
-    try:
+        # Account exists
         if isinstance(a, OfflineAccount):
             logger.error("Offline accounts do not require authentication")
-        elif isinstance(a, MicrosoftAccount):
+            return
+    except AccountError:
+        # Account doesn't exist, create a new Microsoft account
+        a = MicrosoftAccount.new(am, account)
+        am.add(a)
+        logger.info(f"Created new Microsoft account: {account}")
+
+    # Authenticate Microsoft account
+    try:
+        if isinstance(a, MicrosoftAccount):
             a.authenticate()
+            logger.info(f"Account '{account}' authenticated successfully")
         else:
             logger.error("Unknown account type")
     except Exception as e:

@@ -147,10 +147,7 @@ zeptomc account list
 # Créer un compte offline
 zeptomc account create mon-compte
 
-# Créer un compte Microsoft
-zeptomc account create mon-ms-compte --microsoft
-
-# Authentifier un compte Microsoft
+# Créer et authentifier un compte Microsoft
 zeptomc account authenticate mon-ms-compte
 
 # Supprimer un compte
@@ -441,10 +438,7 @@ zeptomc account list
 # Create an offline account
 zeptomc account create my-account
 
-# Create a Microsoft account
-zeptomc account create my-ms-account --microsoft
-
-# Authenticate a Microsoft account
+# Create and authenticate a Microsoft account
 zeptomc account authenticate my-ms-account
 
 # Remove an account
