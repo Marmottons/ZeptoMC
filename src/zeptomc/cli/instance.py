@@ -146,7 +146,7 @@ def config_cli(ctx, im, instance_name):
     Manage Java path, JVM args, and other instance settings.
     
     Examples:
-      zeptomc instance config my-world show                   # Show all settings
+      zeptomc instance config my-world show
       zeptomc instance config my-world java-path /usr/bin/java
       zeptomc instance config my-world java-args -Xmx4G"""
     if im.exists(instance_name):
@@ -203,10 +203,13 @@ def config_delete(config, key):
 def config_java_path(config, path):
     """Set the Java executable path for this instance.
     
-    Usage: zeptomc instance config INSTANCE java-path /path/to/java
+    Specify a custom Java installation for this instance.
     
-    Example:
-      zeptomc instance config my-world java-path /usr/lib/jvm/java-21-openjdk/bin/java"""
+    Usage: zeptomc instance config INSTANCE java-path PATH
+    
+    Examples:
+      zeptomc instance config my-world java-path /usr/bin/java
+      zeptomc instance config modded /usr/lib/jvm/java-21/bin/java"""
     config["java.path"] = path
     print(f"Java path set to: {path}")
 
@@ -217,8 +220,13 @@ def config_java_path(config, path):
 def config_java_args(config, args):
     """Set the JVM arguments for this instance.
     
-    Example: zeptomc instance config default java-args -XX:+UseG1GC -Xms512M
-    """
+    Configure memory and performance settings for Java.
+    
+    Usage: zeptomc instance config INSTANCE java-args [ARGS]
+    
+    Examples:
+      zeptomc instance config my-world java-args -Xmx4G -Xms1G
+      zeptomc instance config modded java-args -XX:+UseG1GC -Xmx8G"""
     java_args = " ".join(args)
     config["java.jvmargs"] = java_args
     print(f"Java arguments set to: {java_args}")

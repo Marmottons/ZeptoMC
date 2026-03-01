@@ -29,9 +29,9 @@ def version_cli():
     By default shows only locally installed versions.
     
     Examples:
-      zeptomc version list                # Show installed versions
-      zeptomc version list --all          # Show all available versions
-      zeptomc version prepare 1.20.1      # Download version 1.20.1"""
+      zeptomc version list
+      zeptomc version list --all
+      zeptomc version prepare 1.20.1"""
     pass
 
 
@@ -44,7 +44,14 @@ def version_cli():
 @click.option("--all", is_flag=True, default=False, help="Show all available versions")
 @pass_version_manager
 def list(vm, release, snapshot, alpha, beta, local, all):
-    """List available Minecraft versions."""
+    """List available Minecraft versions.
+    
+    Usage: zeptomc version list [OPTIONS]
+    
+    Examples:
+      zeptomc version list              # Show local versions
+      zeptomc version list --all        # Show all available
+      zeptomc version list --snapshot   # Show snapshots"""
     if all:
         release = snapshot = alpha = beta = local = True
     elif not (release or snapshot or alpha or beta):
@@ -66,8 +73,9 @@ def prepare(version, verify):
     
     Usage: zeptomc version prepare VERSION [OPTIONS]
     
-    Example:
-      zeptomc version prepare 1.20.1"""
+    Examples:
+      zeptomc version prepare 1.20.1
+      zeptomc version prepare 1.12.2 --verify"""
     version.prepare(verify_hashes=verify)
 
 
@@ -76,7 +84,15 @@ def prepare(version, verify):
 @click.argument("which", default="client")
 @click.option("--output", default=None)
 def jar(version, which, output):
-    """Download the file and save."""
+    """Download the file and save.
+    
+    Usage: zeptomc version jar VERSION [WHICH] [--output PATH]
+    
+    WHICH can be: client (default) or server
+    
+    Examples:
+      zeptomc version jar 1.20.1
+      zeptomc version jar 1.20.1 server --output server.jar"""
     dlspec = version.vspec.downloads.get(which, None)
     if not dlspec:
         die("No such dlspec exists for version {}".format(version.version_name))

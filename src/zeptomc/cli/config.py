@@ -11,9 +11,9 @@ def config_cli():
     Use 'instance config' for per-instance settings.
     
     Examples:
-      zeptomc config show              # Show all settings
-      zeptomc config set key value     # Set a value
-      zeptomc config get key           # Get a value"""
+      zeptomc config show
+      zeptomc config set key value
+      zeptomc config get key"""
     pass
 
 
@@ -36,7 +36,11 @@ def show(cfg):
 def _set(cfg, key, value):
     """Set a global configuration value.
     
-    Usage: zeptomc config set KEY VALUE"""
+    Usage: zeptomc config set KEY VALUE
+    
+    Examples:
+      zeptomc config set java_path /usr/bin/java
+      zeptomc config set minecraft_dir ~/.minecraft"""
     cfg[key] = value
 
 
@@ -49,8 +53,8 @@ def get(cfg, key):
     Usage: zeptomc config get KEY
     
     Examples:
-      zeptomc config get java_path       # Get Java path setting
-      zeptomc config get minecraft_dir   # Get Minecraft directory"""
+      zeptomc config get java_path
+      zeptomc config get minecraft_dir"""
     try:
         print(cfg[key])
     except KeyError:
@@ -66,10 +70,10 @@ def delete(cfg, key):
     Usage: zeptomc config delete KEY
     
     Examples:
-      zeptomc config delete java_path       # Remove Java path setting
-      zeptomc config delete minecraft_dir   # Remove custom Minecraft directory
+      zeptomc config delete java_path
+      zeptomc config delete minecraft_dir
     
-    Note: Settings will revert to defaults after deletion."""
+    Note: Settings revert to defaults after deletion."""
     try:
         del cfg[key]
     except KeyError:

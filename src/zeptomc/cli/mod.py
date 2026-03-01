@@ -11,9 +11,9 @@ def mod_cli():
     Supported loaders: Forge, Fabric
     
     Examples:
-      zeptomc mod loader list          # Show available loaders
-      zeptomc mod loader forge 1.20.1  # Install Forge for 1.20.1
-      zeptomc mod loader fabric 1.20   # Install Fabric for 1.20"""
+      zeptomc mod loader list
+      zeptomc mod loader forge 1.20.1
+      zeptomc mod loader fabric 1.20"""
     pass
 
 

@@ -22,10 +22,10 @@ def play(launcher, am, im, target, account_name, verify):
       • Instance name (e.g., 'vanilla') = That instance, its version
     
     Examples:
-      zeptomc play                    # Launch with defaults
-      zeptomc play 1.20.1             # Launch 1.20.1
-      zeptomc play my-modded-world    # Launch instance
-      zeptomc play --account steve    # Use specific account"""
+      zeptomc play
+      zeptomc play 1.20.1
+      zeptomc play my-modded-world
+      zeptomc play --account steve"""
     if account_name:
         account = am.get(account_name)
     else:

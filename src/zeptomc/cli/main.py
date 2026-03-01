@@ -45,9 +45,9 @@ def zeptomc_cli(ctx: click.Context, debug, root):
     """A minimal, lightweight Minecraft launcher with no bloat.
     
     Quick start:
-      zeptomc play              # Launch Minecraft
-      zeptomc account create    # Create an offline account
-      zeptomc instance list     # Show your instances
+      zeptomc play
+      zeptomc account create
+      zeptomc instance list
     
     For more help: zeptomc COMMAND --help"""
     logging.initialize(debug)

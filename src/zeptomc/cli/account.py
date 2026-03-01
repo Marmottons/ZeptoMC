@@ -23,9 +23,9 @@ def account_cli():
       • Microsoft: Use your Microsoft account (online play)
     
     Examples:
-      zeptomc account create my-account        # Create offline account
-      zeptomc account authenticate ms-account  # Create & auth Microsoft account
-      zeptomc account list                     # Show all accounts"""
+      zeptomc account create my-account
+      zeptomc account authenticate ms-account
+      zeptomc account list"""
     pass
 
 
@@ -103,7 +103,12 @@ def authenticate(am, account):
 @account_cmd
 @pass_account_manager
 def refresh(am, account):
-    """Refresh a Microsoft account token."""
+    """Refresh a Microsoft account token.
+    
+    Usage: zeptomc account refresh ACCOUNT_NAME
+    
+    Example:
+      zeptomc account refresh my-ms-account"""
     try:
         a = am.get(account)
         a.refresh()
@@ -115,7 +120,12 @@ def refresh(am, account):
 @account_cmd
 @pass_account_manager
 def remove(am, account):
-    """Delete an account (cannot be undone)."""
+    """Delete an account (cannot be undone).
+    
+    Usage: zeptomc account remove ACCOUNT_NAME
+    
+    Example:
+      zeptomc account remove old-account"""
     try:
         am.remove(account)
     except AccountError as e:
@@ -126,7 +136,12 @@ def remove(am, account):
 @account_cmd
 @pass_account_manager
 def setdefault(am, account):
-    """Set the default account for launching games."""
+    """Set the default account for launching games.
+    
+    Usage: zeptomc account setdefault ACCOUNT_NAME
+    
+    Example:
+      zeptomc account setdefault my-main-account"""
     try:
         default = am.get(account)
         am.set_default(default)
