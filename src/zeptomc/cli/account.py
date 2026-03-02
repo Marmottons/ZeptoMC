@@ -11,7 +11,7 @@ from zeptomc.logging import logger
 
 
 def account_cmd(fn):
-    return click.argument("account")(fn)
+    return click.argument("account", required=False)(fn)
 
 
 @click.group()
@@ -52,6 +52,9 @@ def create(am, account):
     Examples:
       zeptomc account create Steve
       zeptomc account create my-offline-profile"""
+    if not account:
+        logger.error("Please provide an account name")
+        return
     try:
         acc = OfflineAccount.new(am, account)
         am.add(acc)
@@ -75,6 +78,10 @@ def authenticate(am, account):
     
     Example:
       zeptomc account authenticate my-ms-account"""
+
+    if not account:
+        logger.error("Please provide an account name")
+        return
 
     try:
         a = am.get(account)
@@ -109,6 +116,9 @@ def refresh(am, account):
     
     Example:
       zeptomc account refresh my-ms-account"""
+    if not account:
+        logger.error("Please provide an account name")
+        return
     try:
         a = am.get(account)
         a.refresh()
@@ -126,6 +136,9 @@ def remove(am, account):
     
     Example:
       zeptomc account remove old-account"""
+    if not account:
+        logger.error("Please provide an account name")
+        return
     try:
         am.remove(account)
     except AccountError as e:
@@ -142,6 +155,9 @@ def setdefault(am, account):
     
     Example:
       zeptomc account setdefault my-main-account"""
+    if not account:
+        logger.error("Please provide an account name")
+        return
     try:
         default = am.get(account)
         am.set_default(default)

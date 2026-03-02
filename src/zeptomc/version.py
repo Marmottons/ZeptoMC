@@ -164,7 +164,7 @@ class Version:
                 with open(vspec_path) as fp:
                     return json.load(fp)
             else:
-                die("Specified version ({}) not available".format(self.version_name))
+                die("Specified version ({}) not available\nNote: You can also launch an instance by its name using 'zeptomc play <instance_name>'".format(self.version_name))
         url = self.version_manifest["url"]
         sha1 = self.version_manifest["sha1"]
 

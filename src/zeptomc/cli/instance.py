@@ -44,7 +44,7 @@ def create(im, instance_name, version):
       zeptomc instance create my-world           # Latest version
       zeptomc instance create retro-game 1.12.2  # Specific version"""
     if im.exists(instance_name):
-        logger.error("An instance with that name already exists.")
+        logger.error(f"An instance named '{instance_name}' already exists.\nUse 'zeptomc instance list' to see all instances.")
         return
     im.create(instance_name, version)
 
@@ -66,7 +66,7 @@ def delete(im, instance_name):
     if im.exists(instance_name):
         im.delete(instance_name)
     else:
-        logger.error("No such instance exists.")
+        logger.error(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
 
 
 @instance_cli.command()
@@ -89,7 +89,7 @@ def launch(am, im, instance_name, account, version_override, verify):
     else:
         account = am.get(account)
     if not im.exists(instance_name):
-        logger.error("No such instance exists.")
+        logger.error(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
         return
     inst = im.get(instance_name)
     try:
@@ -106,7 +106,7 @@ def extract_natives(im, instance_name):
     
     Example: zeptomc instance natives my-world"""
     if not im.exists(instance_name):
-        die("No such instance exists.")
+        die(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
     inst = im.get(instance_name)
     inst.extract_natives()
 
@@ -136,10 +136,10 @@ def rename(im, instance_name, new_name):
     new_name = sanitize_name(new_name)
     if im.exists(instance_name):
         if im.exists(new_name):
-            die("Instance with target name already exists.")
+            die("Instance with target name already exists.\nUse 'zeptomc instance list' to see all instances.")
         im.rename(instance_name, new_name)
     else:
-        die("No such instance exists.")
+        die(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
 
 
 @instance_cli.group("config")
@@ -158,7 +158,7 @@ def config_cli(ctx, im, instance_name):
     if im.exists(instance_name):
         ctx.obj = im.get(instance_name).config
     else:
-        die("No such instance exists.")
+        die(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
 
 
 @config_cli.command("show")
