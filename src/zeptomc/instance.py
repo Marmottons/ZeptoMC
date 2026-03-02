@@ -46,7 +46,6 @@ class NativesExtractor:
             dedup.add(fullpath)
             logger.debug("Extracting natives archive: {}".format(fullpath))
             with zipfile.ZipFile(fullpath) as zf:
-                # TODO take exclude into account
                 zf.extractall(path=self.ndir)
 
     def __enter__(self):

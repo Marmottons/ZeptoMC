@@ -20,7 +20,6 @@ ZeptoMC est un lanceur Minecraft en ligne de commande (CLI) ultra-léger avec de
 ### ✨ Caractéristiques
 
 - **Minimaliste** : Seulement 2 dépendances (click, requests)
-- **Léger** : ~106 KB de code source
 - **Zéro bloat** : Pas de dépendances inutiles pour les couleurs ou barres de progression
 - **Cross-platform** : Fonctionne sur Linux, Windows, macOS
 - **Open-source** : Licence MIT
@@ -352,7 +351,6 @@ ZeptoMC is an ultra-lightweight Minecraft command-line launcher with minimal dep
 ### ✨ Features
 
 - **Minimal** : Only 2 dependencies (click, requests)
-- **Lightweight** : ~106 KB of source code
 - **Zero bloat** : No unnecessary dependencies for colors or progress bars
 - **Cross-platform** : Works on Linux, Windows, macOS
 - **Open-source** : MIT License
