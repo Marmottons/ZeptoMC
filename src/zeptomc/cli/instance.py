@@ -118,7 +118,6 @@ def extract_natives(im, instance_name):
 def _dir(launcher, im, instance_name):
     """Print root directory of instance."""
     if not instance_name:
-        # TODO
         print(launcher.get_path(Directory.INSTANCES))
     else:
         instance_name = sanitize_name(instance_name)
