@@ -61,7 +61,6 @@ def get_appdata():
     # for all files, not sure which solution is better.
     # https://docs.microsoft.com/en-us/windows/msix/desktop/desktop-to-uwp-behind-the-scenes
 
-    # HACK: This check is relatively fragile
     if "WindowsApps\\PythonSoftwareFoundation" in sys.base_exec_prefix:
         logger.warning(
             "Detected Microsoft Store Python distribution. "

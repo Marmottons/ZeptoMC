@@ -115,8 +115,6 @@ class VersionSpec:
         except AttributeError:
             pass
 
-        # TODO maybe we could detect extremely old versions of Minecraft and
-        # put an appropriate version of java here in that case
         self.javaVersion = self.attr_override(
             "javaVersion", default=LEGACY_JAVA_VERSION
         )

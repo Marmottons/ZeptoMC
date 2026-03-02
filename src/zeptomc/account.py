@@ -156,7 +156,6 @@ class AccountManager:
 
     def save(self, account):
         self.config["accounts"][account.name] = account.to_dict()
-        # HACK This doesn't trip the crappy dirty flag on config, set manually
         self.config.dirty = True
 
     def remove(self, name):
@@ -164,7 +163,6 @@ class AccountManager:
             if self.config["default"] == name:
                 self.config["default"] = None
             del self.config["accounts"][name]
-            # HACK This doesn't trip the crappy dirty flag on config, set manually
             self.config.dirty = True
         except KeyError:
             raise AccountError("Account does not exist:", name)

@@ -152,7 +152,6 @@ class ForgeInstallContext:
 
 
 def install_classic(ctx: ForgeInstallContext):
-    # TODO Some processing of the libraries should be done to remove duplicates.
     vspec = make_base_vspec(ctx)
     save_vspec(ctx, vspec)
     install_meta = ctx.install_profile["install"]
@@ -184,7 +183,6 @@ def make_base_vspec(ctx: ForgeInstallContext):
         # This is the case for some really old forge versions, before the
         # launcher supported inheritsFrom. Libraries should also be filtered
         # in this case, as they contain everything from the vanilla vspec as well.
-        # TODO
         logger.warning(
             "Support for this version of Forge is not epic yet. Problems may arise."
         )
@@ -306,7 +304,6 @@ def install(
     installer_url = urllib.parse.urljoin(
         MAVEN_URL, posixpath.join(version, INSTALLER_FILE.format(version))
     )
-    # TODO Legacy forge versions don't have an installer
     with TemporaryDirectory(prefix=".forge-installer-", dir=versions_root) as tempdir:
         tempdir = Path(tempdir)
         installer_file = tempdir / "installer.jar"

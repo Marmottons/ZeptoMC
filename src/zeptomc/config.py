@@ -85,10 +85,6 @@ class Config(OverlayDict):
         self.filepath = config_file
         self.dirty = not self.load()
 
-    # TODO This way of detecting dirtiness is not good enough, as for example
-    # a dict within the config can be modified (account config is not flat)
-    # Not sure what to do about this
-
     def __setitem__(self, key, value):
         self.dirty = True
         super().__setitem__(key, value)
