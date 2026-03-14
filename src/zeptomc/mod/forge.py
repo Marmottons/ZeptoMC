@@ -109,7 +109,7 @@ def best_version_from_promos(promos, game_version=None):
     return game_version, forge_version
 
 
-def full_from_forge(all_versions, forge_version):
+def full_from_forge(all_versions, forge_version) -> tuple[str, str]:
     for v in all_versions:
         gv, fv, *_ = v.split("-")
         if fv == forge_version:
@@ -119,7 +119,11 @@ def full_from_forge(all_versions, forge_version):
     )
 
 
-def resolve_version(game_version=None, forge_version=None, latest=False):
+def resolve_version(
+    game_version: str | None = None,
+    forge_version: str | None = None,
+    latest: bool = False,
+) -> tuple[str, str, str]:
     logger.info("Fetching Forge metadata")
     all_versions = set(get_all_versions())
 
@@ -128,11 +132,22 @@ def resolve_version(game_version=None, forge_version=None, latest=False):
     if forge_version is None:
         promos = list(get_applicable_promos(latest))
         game_version, forge_version = best_version_from_promos(promos, game_version)
+        found_game, full = full_from_forge(all_versions, forge_version)
+    else:
+        try:
+            found_game, full = full_from_forge(all_versions, forge_version)
+        except VersionResolutionError:
+            if game_version is not None:
+                raise
+            promos = list(get_applicable_promos(latest))
+            game_version, forge_version = best_version_from_promos(promos, forge_version)
+            found_game, full = full_from_forge(all_versions, forge_version)
 
-    found_game, full = full_from_forge(all_versions, forge_version)
     if game_version and found_game != game_version:
         raise VersionResolutionError("Version mismatch")
     game_version = found_game
+    if forge_version is None:
+        raise VersionResolutionError("Could not resolve Forge version")
 
     return game_version, forge_version, full
 
@@ -244,7 +259,7 @@ def install_113(ctx: ForgeInstallContext):
                 break
         if found is not None:
             logger.debug("Found -DignoreList, extending.")
-            vspec["arguments"]["jvm"][i] += r",${jar_name}.jar"
+            vspec["arguments"]["jvm"][found] += r",${jar_name}.jar"
         else:
             logger.warning(
                 "Could not locate -DignoreList arg, something is probably wrong. The game may not work."
@@ -294,13 +309,6 @@ def install(
 
     logger.info(f"Installing Forge {version} as {version_name}")
 
-    for line in (
-        "As the Forge project is kept alive mostly thanks to ads on their downloads\n"
-        "site, please consider supporting them at https://www.patreon.com/LexManos/\n"
-        "or by visiting their website and looking at some ads."
-    ).splitlines():
-        logger.warning(line)
-
     installer_url = urllib.parse.urljoin(
         MAVEN_URL, posixpath.join(version, INSTALLER_FILE.format(version))
     )
@@ -319,7 +327,7 @@ def install(
             os.mkdir(extract_dir)
             ctx = ForgeInstallContext(
                 version=version,
-                version_info=None,
+                version_info={},
                 game_version=game_version,
                 forge_version=forge_version,
                 version_dir=versions_root / version_name,
@@ -327,7 +335,7 @@ def install(
                 version_name=version_name,
                 extract_dir=extract_dir,
                 installer_file=installer_file,
-                install_profile=None,
+                install_profile={},
             )
             with ZipFile(installer_file) as zf:
                 zf.extractall(path=extract_dir)
@@ -364,27 +372,24 @@ def forge_cli():
 
 @forge_cli.command("install")
 @click.option("--name", default=None)
-@click.argument("forge_version", required=False)
-@click.option("--game", "-g", default=None)
+@click.argument("version", required=False)
 @click.option("--latest", "-l", is_flag=True)
 @pass_launcher
-def install_cli(launcher, name, forge_version, game, latest):
+def install_cli(launcher, name, version, latest):
     """Installs Forge.
 
     The best version is selected automatically based on the given parameters.
     By default, only stable Forge versions are considered, use --latest to
     enable beta versions as well.
 
-    You can install a specific version of forge using the FORGE_VERSION argument.
-    You can also choose the newest version for a specific version of Minecraft
-    using --game."""
+    VERSION can be either a Forge version (for example 11.15.1.2318) or a
+    Minecraft version (for example 1.8.9)."""
     try:
         install(
             launcher.get_path(Directory.VERSIONS),
             launcher.get_path(Directory.LIBRARIES),
-            game,
-            forge_version,
-            latest,
+            forge_version=version,
+            latest=latest,
             version_name=name,
         )
     except (VersionResolutionError, InstallationError, AlreadyInstalledError) as e:
@@ -392,15 +397,12 @@ def install_cli(launcher, name, forge_version, game, latest):
 
 
 @forge_cli.command("version")
-@click.argument("forge_version", required=False)
-@click.option("--game", "-g", default=None)
+@click.argument("version", required=False)
 @click.option("--latest", "-l", is_flag=True)
-def version_cli(forge_version, game, latest):
+def version_cli(version, latest):
     """Resolve version without installing."""
     try:
-        game_version, forge_version, version = resolve_version(
-            game, forge_version, latest
-        )
+        game_version, forge_version, _ = resolve_version(forge_version=version, latest=latest)
         logger.info(f"Found Forge version {forge_version} for Minecraft {game_version}")
     except VersionResolutionError as e:
         logger.error(e)
