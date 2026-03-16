@@ -13,4 +13,4 @@ if sys.version_info < MINPYVERSION:
 
 
 def main():
-    zeptomc_cli()
+    zeptomc_cli(prog_name="zeptomc")

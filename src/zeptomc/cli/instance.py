@@ -2,7 +2,6 @@ import functools
 
 import click
 
-from zeptomc.account import AccountError
 from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_launcher
 from zeptomc.logging import logger
 from zeptomc.utils import Directory, die, sanitize_name
@@ -67,35 +66,6 @@ def delete(im, instance_name):
         im.delete(instance_name)
     else:
         logger.error(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
-
-
-@instance_cli.command()
-@instance_cmd
-@click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
-@click.option("-a", "--account", default=None, help="Account to use (default: saved account)")
-@click.option("--version-override", default=None, help="Override instance version")
-@pass_instance_manager
-@pass_account_manager
-def launch(am, im, instance_name, account, version_override, verify):
-    """Launch a specific instance.
-    
-    Usage: zeptomc instance launch INSTANCE_NAME [OPTIONS]
-    
-    Examples:
-      zeptomc instance launch my-world
-      zeptomc instance launch my-world --account steve"""
-    if account is None:
-        account = am.get_default()
-    else:
-        account = am.get(account)
-    if not im.exists(instance_name):
-        logger.error(f"No instance named '{instance_name}' exists.\nUse 'zeptomc instance list' to see all instances.")
-        return
-    inst = im.get(instance_name)
-    try:
-        inst.launch(account, version_override, verify_hashes=verify)
-    except AccountError as e:
-        logger.error("Not launching due to account error: {}".format(e))
 
 
 @instance_cli.command("natives")

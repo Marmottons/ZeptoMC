@@ -362,28 +362,23 @@ def install(
     return version_name
 
 
-@click.group("forge")
-def forge_cli():
-    """The Forge loader.
-
-    Get more information about Forge at https://minecraftforge.net/"""
-    pass
-
-
-@forge_cli.command("install")
-@click.option("--name", default=None)
+@click.command("forge")
+@click.option("--name", default=None, help="Custom name for the installed version")
 @click.argument("version", required=False)
-@click.option("--latest", "-l", is_flag=True)
+@click.option("--latest", "-l", is_flag=True, help="Include beta/latest versions")
 @pass_launcher
-def install_cli(launcher, name, version, latest):
-    """Installs Forge.
+def forge_cli(launcher, name, version, latest):
+    """Install the Forge mod loader.
 
-    The best version is selected automatically based on the given parameters.
-    By default, only stable Forge versions are considered, use --latest to
-    enable beta versions as well.
+    VERSION is optional. It can be a Minecraft version (ex: 1.8.9) or a
+    Forge version (ex: 11.15.1.2318). If omitted, the latest stable version
+    is installed automatically.
 
-    VERSION can be either a Forge version (for example 11.15.1.2318) or a
-    Minecraft version (for example 1.8.9)."""
+    \b
+    Examples:
+      zeptomc install forge
+      zeptomc install forge 1.8.9
+      zeptomc install forge --latest"""
     try:
         install(
             launcher.get_path(Directory.VERSIONS),
@@ -393,18 +388,6 @@ def install_cli(launcher, name, version, latest):
             version_name=name,
         )
     except (VersionResolutionError, InstallationError, AlreadyInstalledError) as e:
-        logger.error(e)
-
-
-@forge_cli.command("version")
-@click.argument("version", required=False)
-@click.option("--latest", "-l", is_flag=True)
-def version_cli(version, latest):
-    """Resolve version without installing."""
-    try:
-        game_version, forge_version, _ = resolve_version(forge_version=version, latest=latest)
-        logger.info(f"Found Forge version {forge_version} for Minecraft {game_version}")
-    except VersionResolutionError as e:
         logger.error(e)
 
 

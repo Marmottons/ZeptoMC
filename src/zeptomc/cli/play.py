@@ -8,10 +8,11 @@ from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_
 @click.argument("target", required=False)
 @click.option("-a", "--account", "account_name", help="Account to use (default: saved account)")
 @click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
+@click.option("--version-override", default=None, help="Override the instance version")
 @pass_instance_manager
 @pass_account_manager
 @pass_launcher
-def play(launcher, am, im, target, account_name, verify):
+def play(launcher, am, im, target, account_name, verify, version_override):
     """Launch Minecraft instantly.
     
     TARGET can be:
@@ -23,6 +24,7 @@ def play(launcher, am, im, target, account_name, verify):
       zeptomc play
       zeptomc play 1.20.1
       zeptomc play my-modded-world
+      zeptomc play my-modded-world --version-override 1.20.1
       zeptomc play --account steve"""
     if account_name:
         account = am.get(account_name)
@@ -63,7 +65,7 @@ def play(launcher, am, im, target, account_name, verify):
             im.create("default", "latest")
         inst = im.get("default")
     
-    inst.launch(account, version, verify_hashes=verify)
+    inst.launch(account, version_override or version, verify_hashes=verify)
 
 
 def register_play_cli(zeptomc_cli):

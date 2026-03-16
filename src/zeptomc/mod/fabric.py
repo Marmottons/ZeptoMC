@@ -114,24 +114,23 @@ def install(versions_root, game_version=None, loader_version=None, version_name=
         json.dump(vspec_obj, fd, indent=2)
 
 
-@click.group("fabric")
-def fabric_cli():
-    """The Fabric loader.
-
-    Find out more about Fabric at https://fabricmc.net/"""
-    pass
-
-
-@fabric_cli.command("install")
+@click.command("fabric")
 @click.argument("game_version", required=False)
 @click.argument("loader_version", required=False)
-@click.option("--name", default=None)
+@click.option("--name", default=None, help="Custom name for the installed version")
 @pass_launcher
-def install_cli(launcher, game_version, loader_version, name):
-    """Install Fabric. If no additional arguments are specified, the latest
-    supported stable (non-snapshot) game version is chosen. The most recent
-    loader version for the given game version is selected automatically. Both
-    the game version and the loader version may be overridden."""
+def fabric_cli(launcher, game_version, loader_version, name):
+    """Install the Fabric mod loader.
+
+    GAME_VERSION is optional. If omitted, the latest stable Minecraft version
+    is used. LOADER_VERSION is also optional; the latest stable loader for the
+    given game version is selected automatically.
+
+    \b
+    Examples:
+      zeptomc install fabric
+      zeptomc install fabric 1.20.1
+      zeptomc install fabric 1.20.1 0.15.3"""
     versions_root = launcher.get_path(Directory.VERSIONS)
     try:
         install(
@@ -140,18 +139,6 @@ def install_cli(launcher, game_version, loader_version, name):
             loader_version,
             version_name=name,
         )
-    except VersionError as e:
-        logger.error(e)
-
-
-@fabric_cli.command("version")
-@click.argument("game_version", required=False)
-def version_cli(game_version):
-    """Resolve the loader version. If game version is not specified, the latest
-    supported stable (non-snapshot) is chosen automatically."""
-    try:
-        game_version, loader_version, _ = resolve_version(game_version)
-        logger.info(f"{loader_version}-{game_version}")
     except VersionError as e:
         logger.error(e)
 
