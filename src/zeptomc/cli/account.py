@@ -23,7 +23,7 @@ def account_cli():
       • Microsoft: Use your Microsoft account (online play)
     
     Examples:
-      zeptomc account create my-account
+      zeptomc account add my-account
       zeptomc account authenticate ms-account
       zeptomc account list"""
     pass
@@ -41,17 +41,17 @@ def _list(am):
         logger.info("No accounts.")
 
 
-@account_cli.command()
+@account_cli.command("add")
 @account_cmd
 @pass_account_manager
-def create(am, account):
+def add(am, account):
     """Create a new offline account.
     
-    Usage: zeptomc account create ACCOUNT_NAME
+    Usage: zeptomc account add ACCOUNT_NAME
     
     Examples:
-      zeptomc account create Steve
-      zeptomc account create my-offline-profile"""
+      zeptomc account add Steve
+      zeptomc account add my-offline-profile"""
     if not account:
         logger.error("Please provide an account name")
         return
@@ -126,35 +126,36 @@ def refresh(am, account):
         logger.error("Could not refresh account: %s", e)
 
 
-@account_cli.command()
+@account_cli.command("rm")
 @account_cmd
 @pass_account_manager
 def remove(am, account):
     """Delete an account (cannot be undone).
     
-    Usage: zeptomc account remove ACCOUNT_NAME
+    Usage: zeptomc account rm ACCOUNT_NAME
     
     Example:
-      zeptomc account remove old-account"""
+      zeptomc account rm old-account"""
     if not account:
         logger.error("Please provide an account name")
         return
     try:
         am.remove(account)
+        logger.info(f"Account '{account}' removed successfully")
     except AccountError as e:
         logger.error("Could not remove account: %s", e)
 
 
-@account_cli.command()
+@account_cli.command("default")
 @account_cmd
 @pass_account_manager
 def setdefault(am, account):
     """Set the default account for launching games.
     
-    Usage: zeptomc account setdefault ACCOUNT_NAME
+    Usage: zeptomc account default ACCOUNT_NAME
     
     Example:
-      zeptomc account setdefault my-main-account"""
+      zeptomc account default my-main-account"""
     if not account:
         logger.error("Please provide an account name")
         return
