@@ -19,10 +19,12 @@ def instance_cmd(fn):
 @click.group()
 def instance_cli():
     """Manage game instances.
-    
+
+    \b
     An instance is a directory with its own Minecraft version, mods, and settings.
     You can have multiple instances with different versions or configurations.
-    
+
+    \b
     Examples:
       zeptomc instance add vanilla          # Create vanilla 1.20.1
       zeptomc instance add forge18 1.18.2   # Create 1.18.2 with Forge

@@ -13,12 +13,14 @@ from zeptomc.logging import logger
 @pass_launcher
 def play(launcher, am, im, target, account_name):
     """Launch Minecraft instantly.
-    
+
+    \b
     TARGET can be:
       • Empty = Default instance, latest version
       • Version (e.g., '1.20.1') = Default instance, specific version
       • Instance name (e.g., 'vanilla') = That instance, its version
-    
+
+    \b
     Examples:
       zeptomc play
       zeptomc play 1.20.1

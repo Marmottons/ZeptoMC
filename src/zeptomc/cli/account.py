@@ -17,11 +17,13 @@ def account_cmd(fn):
 @click.group()
 def account_cli():
     """Manage Minecraft accounts.
-    
+
+    \b
     Supported types:
       • Offline: Play locally without authentication (default)
       • Microsoft: Use your Microsoft account (online play)
-    
+
+    \b
     Examples:
       zeptomc account add my-account
       zeptomc account authenticate ms-account

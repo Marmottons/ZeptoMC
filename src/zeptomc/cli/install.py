@@ -20,6 +20,7 @@ from zeptomc.version import VersionType
 def install_cli(launcher, target, loader, release, snapshot, all, name):
     """Install Minecraft versions and mod loaders.
 
+    \b
     TARGET can be a version number, a mod loader (forge/fabric), or 'ls'.
 
     \b
