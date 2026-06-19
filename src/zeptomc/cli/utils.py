@@ -20,8 +20,5 @@ def pass_launcher_attrib(attr):
     return decorator
 
 
-pass_config_manager = pass_launcher_attrib("config_manager")
 pass_account_manager = pass_launcher_attrib("account_manager")
-pass_version_manager = pass_launcher_attrib("version_manager")
 pass_instance_manager = pass_launcher_attrib("instance_manager")
-pass_global_config = pass_launcher_attrib("global_config")

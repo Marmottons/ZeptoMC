@@ -9,6 +9,19 @@ from zeptomc.launcher import Launcher
 from zeptomc.logging import logger
 
 
+class OrderedGroup(click.Group):
+    def __init__(self, *args, **kwargs):
+        self._cmd_order = []
+        super().__init__(*args, **kwargs)
+
+    def add_command(self, cmd, name=None):
+        super().add_command(cmd, name)
+        self._cmd_order.append(name or cmd.name)
+
+    def list_commands(self, ctx):
+        return self._cmd_order
+
+
 def print_version(printer):
     import importlib.metadata
     import platform
@@ -22,34 +35,12 @@ def print_version(printer):
     printer("Python {}".format(platform.python_version()))
 
 
-def click_print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-
-    print_version(click.echo)
-    ctx.exit()
-
-
-@click.group()
-@click.option("--debug/--no-debug", default=None, help="Enable debug mode with detailed logs")
+@click.group(cls=OrderedGroup, context_settings=dict(help_option_names=["--help", "--h"]))
+@click.option("--debug", is_flag=True, default=False, help="Enable debug mode with detailed logs")
 @click.option("-r", "--root", help="Custom data directory (default: ~/.zeptomc)", default=None)
-@click.option(
-    "--version",
-    is_flag=True,
-    callback=click_print_version,
-    expose_value=False,
-    is_eager=True,
-)
 @click.pass_context
 def zeptomc_cli(ctx: click.Context, debug, root):
-    """A minimal, lightweight Minecraft launcher with no bloat.
-    
-    Quick start:
-      zeptomc play
-      zeptomc account create
-      zeptomc instance list
-    
-    For more help: zeptomc COMMAND --help"""
+    """Launch Minecraft from the CLI."""
     logging.initialize(debug)
 
     if debug:

@@ -2,17 +2,16 @@ import click
 
 from zeptomc.account import AccountError, OfflineAccount, MicrosoftAccount
 from zeptomc.cli.utils import pass_account_manager, pass_instance_manager, pass_launcher
+from zeptomc.logging import logger
 
 
 @click.command()
 @click.argument("target", required=False)
 @click.option("-a", "--account", "account_name", help="Account to use (default: saved account)")
-@click.option("--verify", is_flag=True, default=False, help="Verify file integrity")
-@click.option("--version-override", default=None, help="Override the instance version")
 @pass_instance_manager
 @pass_account_manager
 @pass_launcher
-def play(launcher, am, im, target, account_name, verify, version_override):
+def play(launcher, am, im, target, account_name):
     """Launch Minecraft instantly.
     
     TARGET can be:
@@ -24,10 +23,13 @@ def play(launcher, am, im, target, account_name, verify, version_override):
       zeptomc play
       zeptomc play 1.20.1
       zeptomc play my-modded-world
-      zeptomc play my-modded-world --version-override 1.20.1
       zeptomc play --account steve"""
     if account_name:
-        account = am.get(account_name)
+        try:
+            account = am.get(account_name)
+        except AccountError:
+            logger.error(f"Account '{account_name}' does not exist.")
+            return
     else:
         try:
             account = am.get_default()
@@ -65,7 +67,7 @@ def play(launcher, am, im, target, account_name, verify, version_override):
             im.create("default", "latest")
         inst = im.get("default")
     
-    inst.launch(account, version_override or version, verify_hashes=verify)
+    inst.launch(account, version)
 
 
 def register_play_cli(zeptomc_cli):

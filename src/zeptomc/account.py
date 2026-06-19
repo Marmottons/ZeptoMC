@@ -124,16 +124,26 @@ class AccountManager:
     def list(self):
         return self.config["accounts"].keys()
 
+    def _resolve_name(self, name):
+        if name in self.config["accounts"]:
+            return name
+        lower = name.lower()
+        for key in self.config["accounts"]:
+            if key.lower() == lower:
+                return key
+        return name
+
     def get(self, name):
+        resolved = self._resolve_name(name)
         try:
-            acc = Account.from_config(self, name, self.config["accounts"][name])
-            acc.is_default = self.config["default"] == name
+            acc = Account.from_config(self, resolved, self.config["accounts"][resolved])
+            acc.is_default = self.config["default"] == resolved
             return acc
         except KeyError as ke:
             raise AccountError("Account does not exist:", name) from ke
 
     def exists(self, name):
-        return name in self.config["accounts"]
+        return self._resolve_name(name) in self.config["accounts"]
 
     def get_default(self):
         default = self.config["default"]

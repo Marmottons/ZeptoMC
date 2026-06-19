@@ -141,17 +141,6 @@ class Instance:
                 verify_hashes,
             )
 
-    def extract_natives(self):
-        vobj = self.launcher.version_manager.get_version(self.config["version"])
-        java_info = assert_java(self.get_java(), vobj.java_version)
-        vobj.download_libraries(java_info, verify_hashes=True)
-        libs = vobj.get_libraries(java_info)
-        ne = NativesExtractor(
-            self.libraries_root, self, filter(attrgetter("is_native"), libs)
-        )
-        ne.extract()
-        logger.info("Extracted natives to {}".format(ne.get_natives_path()))
-
     def _exec_mc(
         self, account, v, java, java_info, gamedir, libraries, natives, verify_hashes
     ):

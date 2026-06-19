@@ -51,8 +51,6 @@ cd /chemin/vers/ZeptoMC
 
 #### Ajouter au PATH (optionnel)
 
-Pour utiliser `zeptomc` de n'importe où :
-
 ```bash
 echo 'export PATH="/chemin/vers/ZeptoMC:$PATH"' >> ~/.bashrc
 source ~/.bashrc
@@ -63,7 +61,17 @@ zeptomc play
 
 ### 📖 Utilisation
 
-#### Lancer Minecraft (versions et instances)
+```
+zeptomc [--debug] [-r CHEMIN] COMMANDE [ARGS...]
+
+Commandes:
+  play      Lancer Minecraft
+  account   Gérer les comptes
+  instance  Gérer les instances
+  install   Installer versions et mod loaders
+```
+
+#### Lancer Minecraft
 
 ```bash
 # Lancer avec version et compte par défaut
@@ -72,74 +80,25 @@ zeptomc play
 # Lancer une version spécifique (instance par défaut)
 zeptomc play 1.20.1
 
-# Lancer une instance spécifique (par son nom)
-zeptomc play my-instance
+# Lancer une instance spécifique
+zeptomc play mon-instance
 
 # Lancer avec un compte spécifique
 zeptomc play --account NomCompte
 ```
 
-#### Gérer les instances
-
-```bash
-# Lister toutes les instances
-zeptomc instance list
-
-# Créer une nouvelle instance
-zeptomc instance create my-instance
-
-# Créer une instance avec une version spécifique
-zeptomc instance create my-instance 1.18.2
-
-# Lancer une instance
-zeptomc instance launch my-instance
-
-# Lancer avec options avancées
-zeptomc instance launch my-instance --verify --version-override 1.20.1
-
-# Renommer une instance
-zeptomc instance rename old-name new-name
-
-# Supprimer une instance
-zeptomc instance delete my-instance
-
-# Extraire les ressources natives (pour débogage)
-zeptomc instance natives my-instance
-
-# Voir le répertoire de l'instance
-zeptomc instance dir my-instance
-```
-
-#### Configurer une instance
-
-```bash
-# Voir la configuration d'une instance
-zeptomc instance config my-instance show
-
-# Changer le chemin Java
-zeptomc instance config my-instance java-path /usr/bin/java8
-
-# Changer les arguments JVM
-zeptomc instance config my-instance java-args -XX:+UseG1GC -Xms512M -Xmx2G
-
-# Lire/écrire/supprimer une clé de configuration
-zeptomc instance config my-instance get java.path
-zeptomc instance config my-instance set java.memory.max 4G
-zeptomc instance config my-instance delete java.path
-```
-
 #### Gérer les comptes
 
-ZeptoMC supporte deux types de comptes :
-- **Offline** : Jouer en mode hors ligne, pas d'authentification requise
-- **Microsoft** : Authentification Microsoft (compte Minecraft moderne)
+Types supportés :
+- **Offline** : Jouer hors ligne, pas d'authentification
+- **Microsoft** : Authentification Microsoft
 
 ```bash
-# Lister tous les comptes (* = compte par défaut)
+# Lister les comptes (* = compte par défaut)
 zeptomc account list
 
 # Créer un compte offline
-zeptomc account create mon-compte
+zeptomc account add mon-compte
 
 # Créer et authentifier un compte Microsoft
 zeptomc account authenticate mon-ms-compte
@@ -148,109 +107,88 @@ zeptomc account authenticate mon-ms-compte
 zeptomc account refresh mon-ms-compte
 
 # Supprimer un compte
-zeptomc account remove NomCompte
+zeptomc account rm NomCompte
 
-# Définir un compte par défaut
-zeptomc account setdefault NomCompte
+# Définir le compte par défaut
+zeptomc account default NomCompte
 ```
 
-#### Gérer les versions Minecraft
+Les noms de comptes sont **insensibles à la casse** (`bedite` ≈ `Bedite`).
+
+#### Gérer les instances
 
 ```bash
-# Lister les versions locales installées
-zeptomc version list
+# Lister les instances
+zeptomc instance ls
 
-# Lister toutes les versions disponibles
-zeptomc version list --all
+# Créer une nouvelle instance
+zeptomc instance add mon-instance
 
-# Filtrer par type
-zeptomc version list --release
-zeptomc version list --snapshot
+# Créer avec une version spécifique
+zeptomc instance add mon-instance 1.18.2
 
-# Télécharger une version
-zeptomc version prepare 1.20.1
+# Supprimer une instance
+zeptomc instance rm mon-instance
 
-# Télécharger le jar client ou serveur
-zeptomc version jar 1.20.1
-zeptomc version jar 1.20.1 server --output server.jar
+# Renommer une instance
+zeptomc instance rename ancien-nouveau nouveau-nom
+
+# Voir le répertoire d'une instance
+zeptomc instance dir mon-instance
 ```
 
-#### Mod loaders
+La configuration des instances se fait en modifiant directement les fichiers :
+`~/.local/share/zeptomc/instances/<instance>/config.json`
+
+#### Installer versions et mod loaders
 
 ```bash
-# Lister les loaders disponibles
-zeptomc mod loader --list
+# Lister les versions disponibles
+zeptomc install ls
+zeptomc install ls --all
+zeptomc install ls --release
 
-# Installer Forge (meilleure version stable pour le jeu spécifié)
-zeptomc mod loader forge install --game 1.20.1
+# Installer la dernière version vanilla
+zeptomc install
 
-# Installer une version Forge spécifique
-zeptomc mod loader forge install 47.2.0
+# Installer une version spécifique
+zeptomc install 1.20.1
 
-# Résoudre la version Forge sans installer
-zeptomc mod loader forge version --game 1.20.1
+# Installer la dernière version avec Forge
+zeptomc install forge
 
-# Installer Fabric
-zeptomc mod loader fabric install 1.20.1
+# Installer une version avec Forge
+zeptomc install 1.20.1 forge
 
-# Résoudre la version Fabric sans installer
-zeptomc mod loader fabric version 1.20.1
+# Installer avec Fabric
+zeptomc install fabric
+zeptomc install 1.20.1 fabric
 ```
 
 #### Options globales
 
 ```bash
-zeptomc --debug          # Mode debug (logs détaillés)
-zeptomc --version        # Afficher la version
-zeptomc -r /chemin       # Répertoire de données personnalisé
+zeptomc --debug      # Mode debug (logs détaillés)
+zeptomc --h          # Aide (alias de --help)
+zeptomc -r /chemin   # Répertoire de données personnalisé
 ```
 
 ### 🔧 Configuration
 
-Les données de ZeptoMC sont stockées dans `~/.local/share/zeptomc/`.
-
-#### Configuration globale
-
-```bash
-# Voir la configuration globale
-zeptomc config show
-
-# Modifier une valeur globale
-zeptomc config set java.path /usr/bin/java
-
-# Lire une valeur
-zeptomc config get java.path
-
-# Supprimer une valeur (retour au défaut)
-zeptomc config delete java.path
-```
+Les données ZeptoMC sont stockées dans `~/.local/share/zeptomc/`.
 
 #### Variables d'environnement
 
 ```bash
-# Personnaliser le répertoire de données
 export ZEPTOMC_ROOT=/mon/chemin
-
 zeptomc play  # Utilisera /mon/chemin
 ```
 
-### 📊 Optimisations récentes
+#### Fichiers de configuration
 
-#### Réduction des dépendances (-60%)
-
-**Avant** :
-- `click`, `requests`, `tqdm`, `coloredlogs`, `colorama` (5 dépendances)
-
-**Après** :
-- `click`, `requests` (2 dépendances)
-
-Les anciennes dépendances ont été remplacées par :
-- **Couleurs ANSI** : Implémentation native (codes ANSI standards)
-- **Barres de progression** : Classe `ProgressBar` minimaliste
-
-#### Renommage du projet
-
-Migration de `picomc` → `ZeptoMC` pour mieux refléter le projet actuel.
+- **Comptes** : `~/.local/share/zeptomc/accounts.json`
+- **Config globale** : `~/.local/share/zeptomc/config.json`
+- **Instances** : `~/.local/share/zeptomc/instances/<nom>/config.json`
 
 ### 🛠️ Développement
 
@@ -264,12 +202,10 @@ src/zeptomc/
 │   ├── __init__.py
 │   ├── main.py       # Point d'entrée CLI
 │   ├── account.py    # Gestion comptes
-│   ├── config.py     # Configuration globale
+│   ├── install.py    # Installation versions + mods
 │   ├── instance.py   # Gestion instances
-│   ├── mod.py        # Mod loaders
 │   ├── play.py       # Lancer le jeu
-│   ├── utils.py      # Utilitaires CLI
-│   └── version.py    # Versions
+│   └── utils.py      # Utilitaires CLI
 ├── mod/              # Support mod loaders
 │   ├── __init__.py
 │   ├── forge.py      # Forge + PicoForgeWrapper
@@ -296,42 +232,10 @@ src/zeptomc/
 #### Tests
 
 ```bash
-# Lancer tous les tests
-./test.sh
-
 # Tester une commande spécifique
-./zeptomc instance list
+./zeptomc instance ls
 ./zeptomc account list
 ```
-
-#### Commits
-
-Les commits suivent ce format :
-
-```
-feat: ajouter une nouvelle fonctionnalité
-fix: corriger un bug
-refactor: refactoriser du code
-docs: mettre à jour la documentation
-test: ajouter/modifier des tests
-```
-
-### 📝 Licence
-
-MIT - Voir [LICENSE](LICENSE)
-
-### 🤝 Contribution
-
-Les contributions sont bienvenues ! N'hésite pas à :
-- Ouvrir une issue pour signaler un bug
-- Faire une pull request pour proposer une amélioration
-- Améliorer la documentation
-
-### ℹ️ Notes
-
-- Ce projet est un fork de [picomc](https://github.com/samcavoj/picomc)
-- Auteur original : Samuel Čavoj
-- Mainteneur actuel : Marmotton
 
 ---
 
@@ -382,8 +286,6 @@ cd /path/to/ZeptoMC
 
 #### Add to PATH (optional)
 
-To use `zeptomc` from anywhere:
-
 ```bash
 echo 'export PATH="/path/to/ZeptoMC:$PATH"' >> ~/.bashrc
 source ~/.bashrc
@@ -394,7 +296,17 @@ zeptomc play
 
 ### 📖 Usage
 
-#### Launch Minecraft (versions and instances)
+```
+zeptomc [--debug] [-r PATH] COMMAND [ARGS...]
+
+Commands:
+  play      Launch Minecraft
+  account   Manage accounts
+  instance  Manage instances
+  install   Install versions and mod loaders
+```
+
+#### Launch Minecraft
 
 ```bash
 # Launch with default version and account
@@ -403,74 +315,25 @@ zeptomc play
 # Launch a specific version (default instance)
 zeptomc play 1.20.1
 
-# Launch a specific instance (by its name)
+# Launch a specific instance
 zeptomc play my-instance
 
 # Launch with a specific account
 zeptomc play --account AccountName
 ```
 
-#### Manage instances
-
-```bash
-# List all instances
-zeptomc instance list
-
-# Create a new instance
-zeptomc instance create my-instance
-
-# Create an instance with a specific version
-zeptomc instance create my-instance 1.18.2
-
-# Launch an instance
-zeptomc instance launch my-instance
-
-# Launch with advanced options
-zeptomc instance launch my-instance --verify --version-override 1.20.1
-
-# Rename an instance
-zeptomc instance rename old-name new-name
-
-# Delete an instance
-zeptomc instance delete my-instance
-
-# Extract native resources (for debugging)
-zeptomc instance natives my-instance
-
-# Show instance directory
-zeptomc instance dir my-instance
-```
-
-#### Configure an instance
-
-```bash
-# Show the instance configuration
-zeptomc instance config my-instance show
-
-# Change the Java executable path
-zeptomc instance config my-instance java-path /usr/bin/java8
-
-# Change the JVM arguments
-zeptomc instance config my-instance java-args -XX:+UseG1GC -Xms512M -Xmx2G
-
-# Read/write/delete a configuration key
-zeptomc instance config my-instance get java.path
-zeptomc instance config my-instance set java.memory.max 4G
-zeptomc instance config my-instance delete java.path
-```
-
 #### Manage accounts
 
-ZeptoMC supports two types of accounts:
-- **Offline** : Play in offline mode, no authentication required
-- **Microsoft** : Microsoft authentication (modern Minecraft account)
+Supported types:
+- **Offline** : Play offline, no authentication
+- **Microsoft** : Microsoft authentication
 
 ```bash
-# List all accounts (* = default account)
+# List accounts (* = default account)
 zeptomc account list
 
 # Create an offline account
-zeptomc account create my-account
+zeptomc account add my-account
 
 # Create and authenticate a Microsoft account
 zeptomc account authenticate my-ms-account
@@ -479,109 +342,88 @@ zeptomc account authenticate my-ms-account
 zeptomc account refresh my-ms-account
 
 # Remove an account
-zeptomc account remove AccountName
+zeptomc account rm AccountName
 
-# Set a default account
-zeptomc account setdefault AccountName
+# Set the default account
+zeptomc account default AccountName
 ```
 
-#### Manage Minecraft versions
+Account names are **case-insensitive** (`bedite` ≈ `Bedite`).
+
+#### Manage instances
 
 ```bash
-# List locally installed versions
-zeptomc version list
+# List instances
+zeptomc instance ls
 
-# List all available versions
-zeptomc version list --all
+# Create a new instance
+zeptomc instance add my-instance
 
-# Filter by type
-zeptomc version list --release
-zeptomc version list --snapshot
+# Create with a specific version
+zeptomc instance add my-instance 1.18.2
 
-# Download a version
-zeptomc version prepare 1.20.1
+# Delete an instance
+zeptomc instance rm my-instance
 
-# Download client or server jar
-zeptomc version jar 1.20.1
-zeptomc version jar 1.20.1 server --output server.jar
+# Rename an instance
+zeptomc instance rename old-name new-name
+
+# Show instance directory
+zeptomc instance dir my-instance
 ```
 
-#### Mod loaders
+Instance config is done by editing files directly:
+`~/.local/share/zeptomc/instances/<name>/config.json`
+
+#### Install versions and mod loaders
 
 ```bash
-# List available loaders
-zeptomc mod loader --list
+# List available versions
+zeptomc install ls
+zeptomc install ls --all
+zeptomc install ls --release
 
-# Install Forge (best stable version for the given game)
-zeptomc mod loader forge install --game 1.20.1
+# Install latest vanilla version
+zeptomc install
 
-# Install a specific Forge version
-zeptomc mod loader forge install 47.2.0
+# Install a specific version
+zeptomc install 1.20.1
 
-# Resolve Forge version without installing
-zeptomc mod loader forge version --game 1.20.1
+# Install latest version with Forge
+zeptomc install forge
 
-# Install Fabric
-zeptomc mod loader fabric install 1.20.1
+# Install a version with Forge
+zeptomc install 1.20.1 forge
 
-# Resolve Fabric version without installing
-zeptomc mod loader fabric version 1.20.1
+# Install with Fabric
+zeptomc install fabric
+zeptomc install 1.20.1 fabric
 ```
 
 #### Global options
 
 ```bash
-zeptomc --debug          # Debug mode (detailed logs)
-zeptomc --version        # Show version
-zeptomc -r /path         # Custom data directory
+zeptomc --debug      # Debug mode (detailed logs)
+zeptomc --h          # Help (alias for --help)
+zeptomc -r /path     # Custom data directory
 ```
 
 ### 🔧 Configuration
 
 ZeptoMC data is stored in `~/.local/share/zeptomc/`.
 
-#### Global configuration
-
-```bash
-# Show global configuration
-zeptomc config show
-
-# Set a global value
-zeptomc config set java.path /usr/bin/java
-
-# Read a value
-zeptomc config get java.path
-
-# Delete a value (revert to default)
-zeptomc config delete java.path
-```
-
 #### Environment variables
 
 ```bash
-# Customize the data directory
 export ZEPTOMC_ROOT=/my/path
-
 zeptomc play  # Will use /my/path
 ```
 
-### 📊 Recent optimizations
+#### Configuration files
 
-#### Dependency reduction (-60%)
-
-**Before** :
-- `click`, `requests`, `tqdm`, `coloredlogs`, `colorama` (5 dependencies)
-
-**After** :
-- `click`, `requests` (2 dependencies)
-
-Old dependencies were replaced with:
-- **ANSI colors** : Native implementation (standard ANSI codes)
-- **Progress bars** : Minimal `ProgressBar` class
-
-#### Project rename
-
-Migration from `picomc` → `ZeptoMC` to better reflect the current project.
+- **Accounts** : `~/.local/share/zeptomc/accounts.json`
+- **Global config** : `~/.local/share/zeptomc/config.json`
+- **Instances** : `~/.local/share/zeptomc/instances/<name>/config.json`
 
 ### 🛠️ Development
 
@@ -595,12 +437,10 @@ src/zeptomc/
 │   ├── __init__.py
 │   ├── main.py       # CLI entry point
 │   ├── account.py    # Account management
-│   ├── config.py     # Global configuration
+│   ├── install.py    # Version + mod installation
 │   ├── instance.py   # Instance management
-│   ├── mod.py        # Mod loaders
 │   ├── play.py       # Launch game
-│   ├── utils.py      # CLI utilities
-│   └── version.py    # Versions
+│   └── utils.py      # CLI utilities
 ├── mod/              # Mod loaders support
 │   ├── __init__.py
 │   ├── forge.py      # Forge + PicoForgeWrapper
@@ -627,43 +467,7 @@ src/zeptomc/
 #### Tests
 
 ```bash
-# Run all tests
-./test.sh
-
 # Test a specific command
-./zeptomc instance list
+./zeptomc instance ls
 ./zeptomc account list
 ```
-
-#### Commits
-
-Commits follow this format:
-
-```
-feat: add a new feature
-fix: fix a bug
-refactor: refactor code
-docs: update documentation
-test: add/modify tests
-```
-
-### 📝 License
-
-MIT - See [LICENSE](LICENSE)
-
-### 🤝 Contributing
-
-Contributions are welcome! Feel free to:
-- Open an issue to report a bug
-- Make a pull request to suggest an improvement
-- Improve the documentation
-
-### ℹ️ Notes
-
-- This project is a fork of [picomc](https://github.com/samcavoj/picomc)
-- Original author: Samuel Čavoj
-- Current maintainer: Marmotton
-
----
-
-**Last updated** : March 2026
