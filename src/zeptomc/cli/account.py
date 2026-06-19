@@ -25,13 +25,13 @@ def account_cli():
     Examples:
       zeptomc account add my-account
       zeptomc account authenticate ms-account
-      zeptomc account list"""
+      zeptomc account ls"""
     pass
 
 
-@account_cli.command("list")
+@account_cli.command("ls")
 @pass_account_manager
-def _list(am):
+def _ls(am):
     """List all accounts (marked with *)."""
     alist = am.list()
     if alist:

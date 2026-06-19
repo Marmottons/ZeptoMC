@@ -26,6 +26,7 @@ def instance_cli():
     Examples:
       zeptomc instance add vanilla          # Create vanilla 1.20.1
       zeptomc instance add forge18 1.18.2   # Create 1.18.2 with Forge
+      zeptomc instance mv old-name new-name  # Rename an instance
       zeptomc instance ls                   # Show all instances"""
     pass
 
@@ -81,14 +82,14 @@ def _dir(launcher, im, instance_name):
         print(im.get_root(instance_name))
 
 
-@instance_cli.command("rename")
+@instance_cli.command("mv")
 @instance_cmd
 @click.argument("new_name")
 @pass_instance_manager
-def rename(im, instance_name, new_name):
-    """Rename an instance.
+def mv(im, instance_name, new_name):
+    """Rename/move an instance.
     
-    Example: zeptomc instance rename old-name new-name"""
+    Example: zeptomc instance mv old-name new-name"""
     new_name = sanitize_name(new_name)
     if im.exists(instance_name):
         if im.exists(new_name):
